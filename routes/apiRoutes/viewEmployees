@@ -11,21 +11,21 @@ class Employee {
         this.manager_id = '';
     }
 
-getID() {
-    return `The employee's id is ${this.id}`
-}
-getFirstName(){
-    return `The employee's first name is ${this.first_name}`
-}
-getLastName(){
-    return `This employee's last name is ${this.last_name}`
-}
-getRole() {
-    return `The employee's role id is ${this.role_id}`
-}
-getManager() {
-    return `The employee's manager id is ${this.manager_id}`
-}
+// getID() {
+//     return `The employee's id is ${this.id}`
+// }
+// getFirstName(){
+//     return `The employee's first name is ${this.first_name}`
+// }
+// getLastName(){
+//     return `This employee's last name is ${this.last_name}`
+// }
+// getRole() {
+//     return `The employee's role id is ${this.role_id}`
+// }
+// getManager() {
+//     return `The employee's manager id is ${this.manager_id}`
+// }
 
 
 viewEmployees() {
@@ -73,7 +73,7 @@ router.post('/employees', ({body},res) => {
 
 //update employee role 
 updateEmployeeRole() {
-    router.put('/employee/:id', (req,res) => {
+    router.put('/employees/:id', (req,res) => {
         const sql = `UPDATE employees SET role_id = ?
                     WHERE id = ?`; 
         
@@ -100,7 +100,7 @@ updateEmployeeRole() {
 
 deleteEmployee() {
 // Delete employee 
-router.delete('/party/:id', (req, res) => {
+router.delete('/employees/:id', (req, res) => {
     const sql = `DELETE FROM employees WHERE id =?`;
 
     db.query(sql, params.id, (err,row) => {
@@ -108,7 +108,7 @@ router.delete('/party/:id', (req, res) => {
             res.status(400).json({error: res.message});
         } else if (!result.affectedRows) {
             res.json({
-                message: 'Emplloyee not found'
+                message: 'Employee not found'
             });
         } else {
             res.json({
@@ -126,3 +126,4 @@ router.delete('/party/:id', (req, res) => {
 
 
 module.exports = Employee; 
+module.exports = router; 
