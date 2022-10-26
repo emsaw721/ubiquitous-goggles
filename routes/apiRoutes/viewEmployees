@@ -1,0 +1,128 @@
+const express = require('express');
+const router = express.Router();
+const db = require('../../db/connection');
+
+class Employee {
+    constructor() {
+        this.id = '';
+        this.first_name = '';
+        this.last_name = '';
+        this.role_id = '';
+        this.manager_id = '';
+    }
+
+getID() {
+    return `The employee's id is ${this.id}`
+}
+getFirstName(){
+    return `The employee's first name is ${this.first_name}`
+}
+getLastName(){
+    return `This employee's last name is ${this.last_name}`
+}
+getRole() {
+    return `The employee's role id is ${this.role_id}`
+}
+getManager() {
+    return `The employee's manager id is ${this.manager_id}`
+}
+
+
+viewEmployees() {
+//Get all employees 
+router.get('/employees', (req,res) => {
+    const sql = `SELECT * FROM employee`;
+    
+    db.query(sql, (err,rows) => {
+        if(err) {
+            res.status(500).json({error: err.message});
+            return; 
+        }
+        res.json({
+            message: 'success',
+            data: rows
+        });
+    });
+});
+}; 
+
+//create employee
+addEmployee() {
+router.post('/employees', ({body},res) => {
+    const sql = `INSERT INTO candidates (id, first_name, last_name, role_id, manager_id) VALUES (?,?,?,?,?)`;
+    const params = [
+        body.id,
+        body.first_name,
+        body.last_name, 
+        body.role_id,
+        body.manager_id
+    ];
+    db.query(sql, params, (err, result) => {
+        if(err) {
+            res.status(400).json({error: err.message});
+            return; 
+        }
+        res.json({
+            message: 'success',
+            data: body
+        });
+    });
+
+  })
+}; 
+
+//update employee role 
+updateEmployeeRole() {
+    router.put('/employee/:id', (req,res) => {
+        const sql = `UPDATE employees SET role_id = ?
+                    WHERE id = ?`; 
+        
+        const params= [req.body.role_id, req.params.id];
+
+        db.query(sql, params, (err,result) => {
+            if(err) {
+                res.status(400).json({error: err.message});
+            } else if (!result.affectedRows) {
+                res.json({
+                    message: 'Employee not found'
+                });
+            } else {
+                res.json({
+                    message: 'Employee role updated',
+                    data: req.body, 
+                    changes: result.affectedRows
+                });
+            }
+        });
+    });
+};
+
+
+deleteEmployee() {
+// Delete employee 
+router.delete('/party/:id', (req, res) => {
+    const sql = `DELETE FROM employees WHERE id =?`;
+
+    db.query(sql, params.id, (err,row) => {
+        if(err) {
+            res.status(400).json({error: res.message});
+        } else if (!result.affectedRows) {
+            res.json({
+                message: 'Emplloyee not found'
+            });
+        } else {
+            res.json({
+                message: 'deleted',
+                changes: result.affectedRows,
+                id: req.params.id
+            });
+        }
+    });
+}); 
+}; 
+
+}; 
+
+
+
+module.exports = Employee; 
