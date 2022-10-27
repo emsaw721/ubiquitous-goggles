@@ -1,21 +1,18 @@
 const express = require('express');
 const db = require('./db/connection');
-const apiRoutesIndex = require('./routes/apiRoutes');
-const apiRoutesEmployees = require('./routes/apiRoutes/viewEmployees');
 const inquirer = require('inquirer');
+const apiRoutes = require('./routes/apiRoutes');
 const fs = require('fs'); 
-
-
 const PORT = process.env.PORT || 3001;
 const app = express();
+
 
 // Express middleware
 app.use(express.urlencoded({ extended: false }));
 app.use(express.json());
 
 // Use apiRoutes
-app.use('/api', apiRoutesIndex);
-app.use('/api', apiRoutesEmployees); 
+app.use('/api', apiRoutes);
 
 // Default response for any other request (Not Found)
 app.use((req, res) => {
@@ -70,5 +67,6 @@ const promptQuestions = employeeData => {
       }
   })
 } 
+
 
 promptQuestions(); 
