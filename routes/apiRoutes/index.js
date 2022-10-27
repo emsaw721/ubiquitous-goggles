@@ -1,8 +1,8 @@
 const express = require('express');
 const router = express.Router();
 
-router.use(require('./viewEmployees'));
-router.use(require('./viewDepartments'));
-router.use(require('./viewDepartments')); 
+router.use(require('../apiRoutes/employeeAPI'));
+router.use(require('../apiRoutes/departmentsAPI'));
+router.use(require('../apiRoutes/rolesAPI')); 
 
-module.export = router; 
+module.export = index; 

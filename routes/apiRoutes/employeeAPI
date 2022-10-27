@@ -21,7 +21,7 @@ function viewEmployees() {
             });
         });
     });
-    }; 
+}; 
     
   
 function addEmployee() {
@@ -127,7 +127,7 @@ function updateEmployeeRole() {
 };
     
     
-    function deleteEmployee() {
+function deleteEmployee() {
     // Delete employee 
     //delete is for deleting 
     router.delete('/employee/:id', (req, res) => {
@@ -149,6 +149,6 @@ function updateEmployeeRole() {
             }
         });
     }); 
-    }; 
+}; 
   
-module.exports = router; 
+module.exports = {viewEmployees, addEmployee, updateEmployeeRole, deleteEmployee}; 

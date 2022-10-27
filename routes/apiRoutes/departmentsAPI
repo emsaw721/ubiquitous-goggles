@@ -21,7 +21,7 @@ function viewDepartments() {
             });
         });
     });
-    }; 
+}; 
 
 function addDepartment() {
     return inquirer
@@ -56,4 +56,4 @@ function addDepartment() {
     )
 }; 
 
-module.exports = router; 
+module.exports = {viewDepartments, addDepartment}; 
