@@ -3,8 +3,8 @@ const inquirer = require('inquirer');
 const router = express.Router();
 const db = require('../../db/connection');
 
-
-function viewRoles() {
+class Roles {
+ viewRoles() {
     //Get all employees 
     // get is for reading 
     router.get('/role', (req,res) => {
@@ -23,7 +23,7 @@ function viewRoles() {
     });
     }; 
 
-function addRole() {
+addRole() {
     return inquirer
     .prompt([
         {
@@ -67,5 +67,6 @@ function addRole() {
         })
     )
 }; 
+}
 
-module.exports = {viewRoles, addRole}; 
+module.exports = Roles; 

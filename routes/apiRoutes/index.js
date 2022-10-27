@@ -1,8 +1,12 @@
-const express = require('express');
-const router = express.Router();
+// const express = require('express');
+// const router = express.Router();
+// const Employee = require('./Employee');
+// const Departments = require('./Departments'); 
+// const Roles = require('./Roles'); 
 
-router.use(require('../apiRoutes/employeeAPI'));
-router.use(require('../apiRoutes/departmentsAPI'));
-router.use(require('../apiRoutes/rolesAPI')); 
+// console.log(Employee)
+// // router.use();
+// // router.use();
+// // router.use(); 
 
-module.export = index; 
+// module.export = router; 

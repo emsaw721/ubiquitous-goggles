@@ -1,12 +1,16 @@
 const express = require('express');
 const db = require('./db/connection');
+const apiEmployee = require('./routes/apiRoutes/Employee');
+const apiRoles = require('./routes/apiRoutes/Roles');
+const apiDepartments = require('./routes/apiRoutes/Departments'); 
 const inquirer = require('inquirer');
-const apiRoutes = require('./routes/apiRoutes');
 const fs = require('fs'); 
 const PORT = process.env.PORT || 3001;
 const app = express();
+// use this to print out data? but why do we need this?
 require('console.table'); 
 
+console.log(apiDepartments)// showing up at [class Departments] and I have no idea what that means 
 
 const promptQuestions = employeeData => {
   return inquirer
@@ -56,8 +60,9 @@ app.use(express.urlencoded({ extended: false }));
 app.use(express.json());
 
 // Use apiRoutes
-app.use('/api', apiRoutes);
-
+app.use('/api', apiEmployee);
+app.use('/api', apiRoles);
+app.use('/api', apiDepartments); 
 
 // Default response for any other request (Not Found)
 app.use((req, res) => {

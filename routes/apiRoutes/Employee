@@ -3,8 +3,9 @@ const inquirer= require('inquirer');
 const router = express.Router();
 const db = require('../../db/connection');
 
-
-function viewEmployees() {
+class Employee {
+//  function 
+viewEmployees() {
     //Get all employees 
     // get is for reading 
     router.get('/employee', (req,res) => {
@@ -24,7 +25,8 @@ function viewEmployees() {
 }; 
     
   
-function addEmployee() {
+// function 
+addEmployee() {
     return inquirer 
     .prompt([
         {
@@ -82,7 +84,8 @@ function addEmployee() {
 }; 
   
     
-function updateEmployeeRole() {
+// function 
+updateEmployeeRole() {
     return inquirer
     .prompt([
         {
@@ -127,7 +130,8 @@ function updateEmployeeRole() {
 };
     
     
-function deleteEmployee() {
+// function 
+deleteEmployee() {
     // Delete employee 
     //delete is for deleting 
     router.delete('/employee/:id', (req, res) => {
@@ -150,5 +154,13 @@ function deleteEmployee() {
         });
     }); 
 }; 
+}
+
   
-module.exports = {viewEmployees, addEmployee, updateEmployeeRole, deleteEmployee}; 
+//module.exports = {viewEmployees, addEmployee, updateEmployeeRole, deleteEmployee};
+// module.exports = viewEmployees(); 
+// module.exports = addEmployee();
+// module.exports = updateEmployeeRole(); 
+// module.exports = deleteEmployee(); 
+module.exports = Employee; 
+
