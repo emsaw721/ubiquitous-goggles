@@ -1,0 +1,59 @@
+const express = require('express');
+const inquirer = require('inquirer'); 
+const router = express.Router();
+const db = require('../../db/connection');
+
+
+function viewDepartments() {
+    //Get all departments
+    // get is for reading 
+    router.get('/department', (req,res) => {
+        const sql = `SELECT * FROM department`;
+        
+        db.query(sql, (err,rows) => {
+            if(err) {
+                res.status(500).json({error: err.message});
+                return; 
+            }
+            res.json({
+                message: 'success',
+                data: rows
+            });
+        });
+    });
+    }; 
+
+function addDepartment() {
+    return inquirer
+    .prompt([
+        {
+            type: 'text',
+            name: 'department-name',
+            message: 'What is the name of the department?',
+        }
+    ])
+    .then(
+        //create department 
+      // post is for creating 
+      router.post('/department', ({body},res) => {
+          const sql = `INSERT INTO role (id, name) VALUES(?,?)`;
+          const params = [
+              body.id,
+              body.name
+          ];
+          db.query(sql, params, (err, result) => {
+              if(err) {
+                  res.status(400).json({error: err.message});
+                  return; 
+              }
+              res.json({
+                  message: `Added ${body.name} to the database.`,
+                  data: body
+              });
+          });
+      
+        })
+    )
+}; 
+
+module.exports = router; 
