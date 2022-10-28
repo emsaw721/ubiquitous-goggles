@@ -62,16 +62,29 @@ function viewEmployees() {
 }
 
 function viewRoles(){
-
+    connect.query(`SELECT * FROM roles`, (err, results) => {
+        if(err) {
+            console.log(err)
+        }
+        console.table(results);
+        promptQuestions(); 
+    })
 }
 
 function viewDepartments(){
-
+    connect.query(`SELECT * FROM department`, (err, results) => {
+        if(err){
+            console.log(err)
+        }
+        console.table(results);
+        promptQuestions(); 
+    })
 }
 
+
 // all adds like this basically 
-function addEmployee() {
-   
+
+function addEmployee(roleTitle) {
     return inquirer 
     .prompt([
         {
@@ -83,32 +96,42 @@ function addEmployee() {
             type: 'text',
             name: 'last-name',
             message: "What is the employee's last name?"
+        },
+        function roleTitle() {
+            connect.query(`SELECT id,title FROM roles`, (err, results) => {
+                if(err){
+                    console.log(err)
+                }
+              console.log(results)
+              let roleIdTitle = results.map(({value: id, title: `${title}`}))
+              let roleTitle = results.title 
+              console.table(roleTitle);
+        
+                })
+                addEmployee(roleTitle)
         }
-    ]) 
-    .then (
         // in the middle, query to get roles, map through them, so we can get title that goes with id, display title and assign id. 
         {
             type: 'list',
             name: 'employee-role',
             message: "What is the employee's role?",
-            // somehow get the role choices from role table in order to have an up-to-date list (if user addRole). 
-            // feel like it should be some sort of function or an array? 
-            choices: ['Sales Lead', 'Sales Associate', 'Lead Engineer', 'Software Engineer', 'Account Manager', 'Accountant', 'Legal Team Lead', 'Lawyer']
-        }
-    ).then ([
-        // same thing 
-        {
-            type: 'list',
-            name: 'employee-manager',
-            message: "Who is the employee's manager?",
-            // same thing as above for here 
-            choices: ['None', 'John Doe', 'Mike Chan', 'Ashley Rodriquez', 'Kevin Tupik', 'Kumal Singh', 'Malia Brown']
+            choices: roleTitle
         }
     ])
-    .then([
-         //console. log (`Added ${body.first_name}${body.last_name} to the database.`,)
-         promptQuestions() 
-    ])
+    // ).then ([
+    //     // same thing 
+    //     {
+    //         type: 'list',
+    //         name: 'employee-manager',
+    //         message: "Who is the employee's manager?",
+    //         // same thing as above for here 
+    //         choices: ['None', 'John Doe', 'Mike Chan', 'Ashley Rodriquez', 'Kevin Tupik', 'Kumal Singh', 'Malia Brown']
+    //     }
+    // ])
+    // .then([
+    //      //console. log (`Added ${body.first_name}${body.last_name} to the database.`,)
+    //      promptQuestions() 
+    // ])
 }
 
 function addRole() {
