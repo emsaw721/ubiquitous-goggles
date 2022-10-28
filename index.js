@@ -212,7 +212,7 @@ function addRoleDepartment(departmentInfo) {
 //         }
 //     ])
 //     .then(
-//         connect.query(``)
+//         connect.query(`INSERT INTO department`)
 //     )
 // }
 
