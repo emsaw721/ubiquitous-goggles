@@ -162,23 +162,84 @@ function addEmployeeManager(employManager) {
 }
 
 function addRole() {
+    return inquirer
+    .prompt([
+        {
+            type: 'text',
+            name: 'name',
+            message: 'What is the name of the role?',
+        },
+        {
+            type: 'text',
+            name: 'salary',
+            message: 'What is the salary of the role?'
+        }
+    ])
+} 
 
+connect.query(`SELECT * FROM department`, (err, results) => {
+    if(err){
+        console.log(err)
+    }
+    let departmentInfo = results.map((department) => {
+        return {
+            name: department.names, 
+            value: department.id
+        }
+    })
+    addRoleDepartment(departmentInfo); 
+})
+
+function addRoleDepartment(departmentInfo) {
+    return inquirer
+    .prompt([
+        {
+            type: 'list',
+            name: 'departmentSelect',
+            message: 'Which department does the role belong to?',
+            choices: departmentInfo
+        }
+    ])
 }
 
-function addDepartment(){
+// function addDepartment(){
+//     return inquirer
+//     .prompt([
+//         {
+//             type: 'text',
+//             name: 'department-name',
+//             message: 'What is the name of the department?',
+//         }
+//     ])
+//     .then(
+//         connect.query(``)
+//     )
+// }
 
-}
 
+// //update functions 
+// function updateEmployeeRole() {
+//     return inquirer
+//     .prompt([
+//         {
+//             type: 'list',
+//             name: 'employee-list',
+//             message: "Which employee's role do you want to update?",
+//             choices: ['']
+//         },
+//         {
+//             type: 'list',
+//             name: 'role-type',
+//             message: "What is the employee's new role?",
+//             choices: ['Sales Lead', 'Sales Associate', 'Lead Engineer', 'Software Engineer', 'Account Manager', 'Accountant', 'Legal Team Lead', 'Lawyer']
+//         }
+//     ])
+// }
 
-//update functions 
-function updateEmployeeRole() {
+// //delete functions 
+// function deleteEmployee() {
 
-}
-
-//delete functions 
-function deleteEmployee() {
-
-}
+// }
 
 
 promptQuestions(); 
