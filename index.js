@@ -96,33 +96,38 @@ function addEmployee() {
             name: 'last-name',
             message: "What is the employee's last name?"
         }
-    ]).then(
+    ])
+}
         
             connect.query(`SELECT id,title FROM roles`, (err, results) => {
                 if(err){
                     console.log(err)
                 }
-            console.log(results)
            
-            results.map((role) => {
+            let roleInfo = results.map((role) => {
                 return{
                     name: role.title,
                     value: role.id
                     }
                 })
+                console.log(roleInfo)
+            addEmployeeRole(roleInfo)
             })
-    ).then([
-          
+            
+function addEmployeeRole(roleInfo) {
+        return inquirer
+        .prompt([
         {
             type: 'list',
             name: 'employee-role',
             message: "What is the employee's role?",
-            choices:[]
+            choices: roleInfo
         // in the middle, query to get roles, map through them, so we can get title that goes with id, display title and assign id. 
             
         }
    
     ])
+}
 
     // ).then ([
     //     // same thing 
@@ -137,7 +142,7 @@ function addEmployee() {
     // .then([
     //      //console. log (`Added ${body.first_name}${body.last_name} to the database.`,)
     //      promptQuestions() 
-}
+
 function addRole() {
 
 }
@@ -157,6 +162,5 @@ function deleteEmployee() {
 
 }
 
-    
 
 promptQuestions(); 
