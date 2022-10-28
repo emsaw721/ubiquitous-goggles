@@ -5,79 +5,89 @@ const mysql = require('mysql2');
 // use this to print out data? but why do we need this?
 const ctable = require('console.table');
 
-let employeeListArr = [] 
-console.log(employeeListArr)
 
-// const promptQuestions = employeeData => {
-//     return inquirer
-//         .prompt([
-//             {
-//                 type: 'list',
-//                 name: 'action',
-//                 message: 'What would you like to do?',
-//                 choices: ['View All Employees', 'Add Employee', 'Remove Employee', 'Update Employee Role', 'View All Roles', 'Add Role', 'View All Departments', 'Add Department']
-//             }
-//         ])
-//         .then(function (userInput) {
-//             switch (userInput.action) {
-//                 case 'View All Employees':
-//                     viewEmployees();
-//                     break;
-//                 case 'Add Employee':
-//                     addEmployee();
-//                     break;
-//                 case 'Remove Employee':
-//                     removeEmployee();
-//                     break;
-//                 case 'Update Employee Role':
-//                     updateEmployeeRole();
-//                     break;
-//                 case 'View All Roles':
-//                     viewRoles();
-//                     break;
-//                 case 'Add Role':
-//                     addRole();
-//                     break;
-//                 case 'View All Departments':
-//                     viewDepartments();
-//                     break;
-//                 case 'Add Department':
-//                     addDepartment();
-//                     break;
-//             }
-//         })
-// }
-// // all views like this basically 
-// function viewEmployees() {
-//     connect.query(`SELECT * FROM employee`, (err, results) => {
-//         if (err) {
-//             console.log(err)
-//         }
-//         console.table(results);
-//         promptQuestions();
-//     })
-// }
+const promptQuestions = employeeData => {
+    return inquirer
+        .prompt([
+            {
+                type: 'list',
+                name: 'action',
+                message: 'What would you like to do?',
+                choices: ['View All Employees', 'Add Employee', 'Remove Employee', 'Update Employee Role', 'View All Roles', 'Add Role', 'View All Departments', 'Add Department']
+            }
+        ])
+        .then(function (userInput) {
+            switch (userInput.action) {
+                case 'View All Employees':
+                    viewEmployees();
+                    break;
+                case 'Add Employee':
+                    addEmployee();
+                    break;
+                case 'Remove Employee':
+                    removeEmployee();
+                    break;
+                case 'Update Employee Role':
+                    updateEmployeeRole();
+                    break;
+                case 'View All Roles':
+                    viewRoles();
+                    break;
+                case 'Add Role':
+                    addRole();
+                    break;
+                case 'View All Departments':
+                    viewDepartments();
+                    break;
+                case 'Add Department':
+                    addDepartment();
+                    break;
+            }
+        })
+}
+// all views like this basically 
+function viewEmployees() {
+    connect.query(`SELECT * FROM employee`, (err, results) => {
+        if (err) {
+            console.log(err)
+        }
+        console.table(results);
+        promptQuestions();
+    })
+}
 
-// function viewRoles() {
-//     connect.query(`SELECT * FROM roles`, (err, results) => {
-//         if (err) {
-//             console.log(err)
-//         }
-//         console.table(results);
-//         promptQuestions();
-//     })
-// }
+function viewRoles() {
+    connect.query(`SELECT * FROM roles`, (err, results) => {
+        if (err) {
+            console.log(err)
+        }
+        console.table(results);
+        promptQuestions();
+    })
+}
 
-// function viewDepartments() {
-//     connect.query(`SELECT * FROM department`, (err, results) => {
-//         if (err) {
-//             console.log(err)
-//         }
-//         console.table(results);
-//         promptQuestions();
-//     })
-// }
+function viewDepartments() {
+    connect.query(`SELECT * FROM department`, (err, results) => {
+        if (err) {
+            console.log(err)
+        }
+        console.table(results);
+        promptQuestions();
+    })
+}
 
+connect.query(`SELECT * FROM employee`, (err, results) => {
+    if(err) throw err;
+    let employeeList = results.map((employees) => {
+        return {
+            name: `${employees.first_name} ${employees.last_name}`,
+            value: employees.id 
+        }
+    })
+    // updateEmployeeRole(employeeList); 
+    removeEmployee(employeeList); 
+
+})
 
 // all adds like this basically 
 // function addEmployee() {
@@ -211,25 +221,7 @@ console.log(employeeListArr)
 //         }))
 // }
 
-connect.query(`SELECT * FROM employee`, (err, results) => {
-    if(err) throw err;
-    let employeeList = results.map((employees) => {
-        return {
-            name: `${employees.first_name} ${employees.last_name}`,
-            value: employees.id 
-        }
-    })
-    employeeListArr.push(employeeList)
-    // let employeeRole = results.map((role) => {
-    //     return {
-    //         name: role.title,
-    //         value: role.id
-    //     }
-    // })
-    // updateEmployeeRole(employeeList, employeeRole); 
-     removeEmployee(employeeList); 
 
-})
 
 //update functions 
 // function updateEmployeeRole(employeeList, employeeRole) {
@@ -275,4 +267,4 @@ function removeEmployee(employeeList) {
 }
 
 
-// promptQuestions(); 
+promptQuestions(); 
