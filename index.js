@@ -79,140 +79,137 @@ function viewDepartments() {
 
 
 // all adds like this basically 
-function addEmployee() {
-    return inquirer
-        .prompt([
-            {
-                type: 'text',
-                name: 'first-name',
-                message: "What is the employee's first name?"
-            },
-            {
-                type: 'text',
-                name: 'last-name',
-                message: "What is the employee's last name?"
-            }
-        ])
-        .then(connect.query(`SELECT * FROM roles`, (err, results) => {
-            if (err) {
-                console.log(err)
-            }
+// function addEmployee() {
+//     return inquirer
+//         .prompt([
+//             {
+//                 type: 'text',
+//                 name: 'first-name',
+//                 message: "What is the employee's first name?"
+//             },
+//             {
+//                 type: 'text',
+//                 name: 'last-name',
+//                 message: "What is the employee's last name?"
+//             }
+//         ])
+//         .then(connect.query(`SELECT * FROM roles`, (err, results) => {
+//             if (err) {
+//                 console.log(err)
+//             }
 
-            let roleInfo = results.map((role) => {
-                return {
-                    name: role.title,
-                    value: role.id
-                }
-            })
-            function addEmployeeRole(roleInfo) {
-                return inquirer
-                    .prompt([
-                        {
-                            type: 'list',
-                            name: 'employee-role',
-                            message: "What is the employee's role?",
-                            choices: roleInfo
-                            // in the middle, query to get roles, map through them, so we can get title that goes with id, display title and assign id. 
-                        }
+//             let roleInfo = results.map((role) => {
+//                 return {
+//                     name: role.title,
+//                     value: role.id
+//                 }
+//             })
+//             function addEmployeeRole(roleInfo) {
+//                 return inquirer
+//                     .prompt([
+//                         {
+//                             type: 'list',
+//                             name: 'employee-role',
+//                             message: "What is the employee's role?",
+//                             choices: roleInfo
+//                             // in the middle, query to get roles, map through them, so we can get title that goes with id, display title and assign id. 
+//                         }
 
-                    ])
-                    .then(
-                        connect.query(`SELECT * FROM manager`, (err, results) => {
-                            if (err) {
-                                console.log(err)
-                            }
+//                     ])
+//                     .then(
+//                         connect.query(`SELECT * FROM manager`, (err, results) => {
+//                             if (err) {
+//                                 console.log(err)
+//                             }
 
-                            let employManager = results.map((manager) => {
+//                             let employManager = results.map((manager) => {
 
-                                return {
-                                    name: `${manager.first_name} ${manager.last_name}`,
-                                    value: manager.id
-                                }
-                            })
+//                                 return {
+//                                     name: `${manager.first_name} ${manager.last_name}`,
+//                                     value: manager.id
+//                                 }
+//                             })
 
-                            function addEmployeeManager(employManager) {
-                                return inquirer
-                                    .prompt([
-                                        {
-                                            type: 'list',
-                                            name: 'employee-manager',
-                                            message: "Who is the employee's manager?",
-                                            choices: employManager
-                                        }
+//                             function addEmployeeManager(employManager) {
+//                                 return inquirer
+//                                     .prompt([
+//                                         {
+//                                             type: 'list',
+//                                             name: 'employee-manager',
+//                                             message: "Who is the employee's manager?",
+//                                             choices: employManager
+//                                         }
 
-                                    ])
-                                    .then((answer) => {
-                                        //    console.log(answer)
-                                        //     //connect.query(`INSERT INTO candidates (first_name, last_name, role_id, manager_id) VALUES(${answer.first_name},${answer.last_name},${answer.role_id},${answer.manager_id})`);
-                                        //     // eventuall want to get the employee name displayed 
-                                        //     console.log(`Added employee to the database.`)
-                                        // })
-                                        promptQuestions();
-                                    })
-                            }
-                        })
-                    )
-            }
-        }
-        )
-        )
-}
+//                                     ])
+//                                     .then((answer) => {
+//                                         //    console.log(answer)
+//                                         //     //connect.query(`INSERT INTO candidates (first_name, last_name, role_id, manager_id) VALUES(${answer.first_name},${answer.last_name},${answer.role_id},${answer.manager_id})`);
+//                                         //     // eventuall want to get the employee name displayed 
+//                                         //     console.log(`Added employee to the database.`)
+//                                         // })
+//                                         promptQuestions();
+//                                     })
+//                             }
+//                         })
+//                     )
+//             }
+//         }
+//         )
+//         )
+// }
 
 // function addRole() {
 //     return inquirer
-//     .prompt([
-//         {
-//             type: 'text',
-//             name: 'name',
-//             message: 'What is the name of the role?',
-//         },
-//         {
-//             type: 'text',
-//             name: 'salary',
-//             message: 'What is the salary of the role?'
-//         }
-//     ])
-
-
-// .then(connect.query(`SELECT * FROM department`, (err, results) => {
-//     if(err){
-//         console.log(err)
-//     }
-//     let departmentInfo = results.map((department) => {
-//         return {
-//             name: department.names, 
-//             value: department.id
-//         }
-//     })
-//     addRoleDepartment(departmentInfo); 
-// }))
-
-// function addRoleDepartment(departmentInfo) {
-//     return inquirer
-//     .prompt([
-//         {
-//             type: 'list',
-//             name: 'departmentSelect',
-//             message: 'Which department does the role belong to?',
-//             choices: departmentInfo
-//         }
-//     ])
+//         .prompt([
+//             {
+//                 type: 'text',
+//                 name: 'name',
+//                 message: 'What is the name of the role?',
+//             },
+//             {
+//                 type: 'text',
+//                 name: 'salary',
+//                 message: 'What is the salary of the role?'
+//             }
+//         ])
+//         .then(connect.query(`SELECT * FROM department`, (err, results) => {
+//             if (err) {
+//                 console.log(err)
+//             }
+//             let departmentInfo = results.map((department) => {
+//                 return {
+//                     name: department.names,
+//                     value: department.id
+//                 }
+//             })
+//             function addRoleDepartment(departmentInfo) {
+//                 return inquirer
+//                     .prompt([
+//                         {
+//                             type: 'list',
+//                             name: 'departmentSelect',
+//                             message: 'Which department does the role belong to?',
+//                             choices: departmentInfo
+//                         }
+//                     ]).then(
+//                         function addDepartment() {
+//                             return inquirer
+//                                 .prompt([
+//                                     {
+//                                         type: 'text',
+//                                         name: 'department-name',
+//                                         message: 'What is the name of the department?',
+//                                     }
+//                                 ])
+//                                 .then(
+//                                     // insert all answers into department 
+//                                     connect.query(`INSERT INTO department`)
+//                                 )
+//                         })
+//             }
+//         }))
 // }
-//}
 
-// function addDepartment(){
-//     return inquirer
-//     .prompt([
-//         {
-//             type: 'text',
-//             name: 'department-name',
-//             message: 'What is the name of the department?',
-//         }
-//     ])
-//     .then(
-//         connect.query(`INSERT INTO department`)
-//     )
-// }
 // connect.query(`SELECT * FROM employee UNION SELECT * FROM roles`, (err, results) => {
 //     if(err) throw err;
 //     let employeeList = results.map((employees) => {
