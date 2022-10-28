@@ -129,19 +129,37 @@ function addEmployeeRole(roleInfo) {
     ])
 }
 
-    // ).then ([
-    //     // same thing 
-    //     {
-    //         type: 'list',
-    //         name: 'employee-manager',
-    //         message: "Who is the employee's manager?",
-    //         // same thing as above for here 
-    //         choices: ['None', 'John Doe', 'Mike Chan', 'Ashley Rodriquez', 'Kevin Tupik', 'Kumal Singh', 'Malia Brown']
-    //     }
-    // ])
-    // .then([
-    //      //console. log (`Added ${body.first_name}${body.last_name} to the database.`,)
-    //      promptQuestions() 
+connect.query(`SELECT * FROM manager`, (err,results) => {
+    if(err) {
+        console.log(err)
+    }
+console.log(results)
+    let employManager = results.map((manager) => {
+        
+        return {
+            name: `${manager.first_name} ${manager.last_name}`,
+            value: manager.id
+        }
+    })
+    console.log(employManager)
+    addEmployeeManager(employManager); 
+})
+
+function addEmployeeManager(employManager) {
+    return inquirer 
+    .prompt([
+       {
+            type: 'list',
+            name: 'employee-manager',
+            message: "Who is the employee's manager?",
+            choices: employManager
+        }
+    ])
+    .then(
+        // eventuall want to get the employee name displayed 
+        console.log(`Added employee to the database.`)
+    )
+}
 
 function addRole() {
 

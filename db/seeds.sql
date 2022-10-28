@@ -10,12 +10,20 @@ VALUES
 ('7', 'Sarah', 'Lourd', '7', null),
 ('8', 'Tom', 'Allen', '8', '7'); 
 
+INSERT INTO manager
+(id, first_name, last_name)
+VALUES
+('1', 'John', 'Doe'),
+('3', 'Ashley', 'Rodriguez'),
+('5', 'Kunal', 'Singh'),
+('7', 'Sarah', 'Lourd');
+
 INSERT INTO roles
 (id, title, salary, department_id)
 VALUES
 ('1', 'Sales Lead', '100000', '1'),
 ('2', 'Sales Associate', '80000', '1'),
-('3', 'Cheif Engineer', '300000', '2'),
+('3', 'Chief Engineer', '300000', '2'),
 ('4', 'Software Engineer', '150000', '2'),
 ('5', 'Account Manager', '160000', '3'),
 ('6', 'Accountant', '130000', '3'),

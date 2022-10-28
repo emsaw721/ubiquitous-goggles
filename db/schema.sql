@@ -1,6 +1,7 @@
 DROP TABLE IF EXISTS employee; 
 DROP TABLE IF EXISTS department;
 DROP TABLE IF EXISTS roles;  
+DROP TABLE IF EXISTS manager; 
 
 CREATE TABLE employee (
     id INTEGER PRIMARY KEY, 
@@ -21,5 +22,11 @@ CREATE TABLE roles (
     salary DECIMAL,
     department_id INTEGER
 );
+
+CREATE TABLE manager (
+    id INTEGER PRIMARY KEY,
+    first_name VARCHAR(30),
+    last_name VARCHAR(30) 
+); 
 
 
