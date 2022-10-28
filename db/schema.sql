@@ -1,6 +1,6 @@
 DROP TABLE IF EXISTS employee; 
 DROP TABLE IF EXISTS department;
-DROP TABLE IF EXISTS role;  
+DROP TABLE IF EXISTS roles;  
 
 CREATE TABLE employee (
     id INTEGER PRIMARY KEY, 
@@ -12,12 +12,14 @@ CREATE TABLE employee (
 
 CREATE TABLE department (
     id  INTEGER PRIMARY KEY,
-    name VARCHAR(30)
+    names VARCHAR(30)
 );
 
-CREATE TABLE role (
+CREATE TABLE roles (
     id INTEGER PRIMARY KEY, 
     title VARCHAR(30),
     salary DECIMAL,
     department_id INTEGER
 );
+
+

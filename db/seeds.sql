@@ -1,16 +1,16 @@
 INSERT INTO employee
 (id, first_name, last_name, role_id, manager_id)
 VALUES 
-('1', 'John', 'Doe', '1', ''),
+('1', 'John', 'Doe', '1', null),
 ('2', 'Mike', 'Chan', '2', '1'),
-('3', 'Ashley', 'Rodriguez', '3', ''),
+('3', 'Ashley', 'Rodriguez', '3', null),
 ('4', 'Kevin', 'Tupik', '4', '3'),
-('5', 'Kunal', 'Singh', '5', ''),
+('5', 'Kunal', 'Singh', '5', null),
 ('6', 'Malia', 'Brown', '6', '5'),
-('7', 'Sarah', 'Lourd', '7', ''),
+('7', 'Sarah', 'Lourd', '7', null),
 ('8', 'Tom', 'Allen', '8', '7'); 
 
-INSERT INTO role
+INSERT INTO roles
 (id, title, salary, department_id)
 VALUES
 ('1', 'Sales Lead', '100000', '1'),
@@ -23,7 +23,7 @@ VALUES
 ('8', 'Lawyer', '200000', '4'); 
 
 INSERT INTO department
-(id, name)
+(id, names)
 VALUES
 ('1', 'Sales'),
 ('2', 'Engineering'),

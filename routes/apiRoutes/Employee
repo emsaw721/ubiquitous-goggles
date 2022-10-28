@@ -3,7 +3,6 @@ const inquirer= require('inquirer');
 const router = express.Router();
 const db = require('../../db/connection');
 
-class Employee {
 //  function 
 viewEmployees() {
     //Get all employees 
@@ -154,7 +153,7 @@ deleteEmployee() {
         });
     }); 
 }; 
-}
+
 
   
 //module.exports = {viewEmployees, addEmployee, updateEmployeeRole, deleteEmployee};

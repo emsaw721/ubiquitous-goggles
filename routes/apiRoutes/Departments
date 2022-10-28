@@ -1,13 +1,14 @@
 const express = require('express');
 const inquirer = require('inquirer'); 
-const router = express.Router();
+
 const db = require('../../db/connection');
 
-class Departments {
+
  viewDepartments() {
     //Get all departments
     // get is for reading 
     router.get('/department', (req,res) => {
+        // need a function to do this 
         const sql = `SELECT * FROM department`;
         
         db.query(sql, (err,rows) => {
