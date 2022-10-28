@@ -83,8 +83,7 @@ function viewDepartments(){
 
 
 // all adds like this basically 
-
-function addEmployee(roleTitle) {
+function addEmployee() {
     return inquirer 
     .prompt([
         {
@@ -96,28 +95,35 @@ function addEmployee(roleTitle) {
             type: 'text',
             name: 'last-name',
             message: "What is the employee's last name?"
-        },
-        function roleTitle() {
+        }
+    ]).then(
+        
             connect.query(`SELECT id,title FROM roles`, (err, results) => {
                 if(err){
                     console.log(err)
                 }
-              console.log(results)
-              let roleIdTitle = results.map(({value: id, title: `${title}`}))
-              let roleTitle = results.title 
-              console.table(roleTitle);
-        
+            console.log(results)
+           
+            results.map((role) => {
+                return{
+                    name: role.title,
+                    value: role.id
+                    }
                 })
-                addEmployee(roleTitle)
-        }
-        // in the middle, query to get roles, map through them, so we can get title that goes with id, display title and assign id. 
+            })
+    ).then([
+          
         {
             type: 'list',
             name: 'employee-role',
             message: "What is the employee's role?",
-            choices: roleTitle
+            choices:[]
+        // in the middle, query to get roles, map through them, so we can get title that goes with id, display title and assign id. 
+            
         }
+   
     ])
+
     // ).then ([
     //     // same thing 
     //     {
@@ -131,9 +137,7 @@ function addEmployee(roleTitle) {
     // .then([
     //      //console. log (`Added ${body.first_name}${body.last_name} to the database.`,)
     //      promptQuestions() 
-    // ])
 }
-
 function addRole() {
 
 }
