@@ -1,13 +1,9 @@
-// const express = require('express');
+//.then is a method, methods are actions that can be performed on objects--> object properties that have function values 
 const connect = require('./db/connection');
-// const apiEmployee = require('./routes/apiRoutes/Employee');
-// const apiRoles = require('./routes/apiRoutes/Roles');
-// const apiDepartments = require('./routes/apiRoutes/Departments'); 
+
 const inquirer = require('inquirer');
 const mysql = require('mysql2'); 
-// const fs = require('fs'); 
-// const PORT = process.env.PORT || 3001;
-// const app = express();
+
 // use this to print out data? but why do we need this?
 const ctable = require('console.table'); 
 
@@ -97,24 +93,22 @@ function addEmployee() {
             message: "What is the employee's last name?"
         }
     ])
-}
+.then(connect.query(`SELECT * FROM roles`, (err, results) => {
+    if(err){
+        console.log(err)
+        }
         
-            connect.query(`SELECT id,title FROM roles`, (err, results) => {
-                if(err){
-                    console.log(err)
+    let roleInfo = results.map((role) => {
+            return{
+                name: role.title,
+                value: role.id
                 }
-           
-            let roleInfo = results.map((role) => {
-                return{
-                    name: role.title,
-                    value: role.id
-                    }
-                })
-                console.log(roleInfo)
-            addEmployeeRole(roleInfo)
-            })
-            
-function addEmployeeRole(roleInfo) {
+        })
+        addEmployeeRole(roleInfo); 
+})
+)
+
+function addEmployeeRole(roleInfo){
         return inquirer
         .prompt([
         {
@@ -123,17 +117,15 @@ function addEmployeeRole(roleInfo) {
             message: "What is the employee's role?",
             choices: roleInfo
         // in the middle, query to get roles, map through them, so we can get title that goes with id, display title and assign id. 
-            
         }
    
     ])
-}
-
+.then(
 connect.query(`SELECT * FROM manager`, (err,results) => {
     if(err) {
         console.log(err)
     }
-console.log(results)
+
     let employManager = results.map((manager) => {
         
         return {
@@ -141,9 +133,10 @@ console.log(results)
             value: manager.id
         }
     })
-    console.log(employManager)
-    addEmployeeManager(employManager); 
+   addEmployeeManager(employManager)
 })
+)
+}
 
 function addEmployeeManager(employManager) {
     return inquirer 
@@ -154,53 +147,60 @@ function addEmployeeManager(employManager) {
             message: "Who is the employee's manager?",
             choices: employManager
         }
-    ])
-    .then(
-        // eventuall want to get the employee name displayed 
-        console.log(`Added employee to the database.`)
-    )
-}
 
-function addRole() {
-    return inquirer
-    .prompt([
-        {
-            type: 'text',
-            name: 'name',
-            message: 'What is the name of the role?',
-        },
-        {
-            type: 'text',
-            name: 'salary',
-            message: 'What is the salary of the role?'
-        }
-    ])
-} 
-
-connect.query(`SELECT * FROM department`, (err, results) => {
-    if(err){
-        console.log(err)
-    }
-    let departmentInfo = results.map((department) => {
-        return {
-            name: department.names, 
-            value: department.id
-        }
-    })
-    addRoleDepartment(departmentInfo); 
+])
+    .then((answer) => {
+    //    console.log(answer)
+    //     //connect.query(`INSERT INTO candidates (first_name, last_name, role_id, manager_id) VALUES(${answer.first_name},${answer.last_name},${answer.role_id},${answer.manager_id})`);
+    //     // eventuall want to get the employee name displayed 
+    //     console.log(`Added employee to the database.`)
+    // })
+    promptQuestions(); 
 })
-
-function addRoleDepartment(departmentInfo) {
-    return inquirer
-    .prompt([
-        {
-            type: 'list',
-            name: 'departmentSelect',
-            message: 'Which department does the role belong to?',
-            choices: departmentInfo
-        }
-    ])
 }
+}
+
+// function addRole() {
+//     return inquirer
+//     .prompt([
+//         {
+//             type: 'text',
+//             name: 'name',
+//             message: 'What is the name of the role?',
+//         },
+//         {
+//             type: 'text',
+//             name: 'salary',
+//             message: 'What is the salary of the role?'
+//         }
+//     ])
+
+
+// .then(connect.query(`SELECT * FROM department`, (err, results) => {
+//     if(err){
+//         console.log(err)
+//     }
+//     let departmentInfo = results.map((department) => {
+//         return {
+//             name: department.names, 
+//             value: department.id
+//         }
+//     })
+//     addRoleDepartment(departmentInfo); 
+// }))
+
+// function addRoleDepartment(departmentInfo) {
+//     return inquirer
+//     .prompt([
+//         {
+//             type: 'list',
+//             name: 'departmentSelect',
+//             message: 'Which department does the role belong to?',
+//             choices: departmentInfo
+//         }
+//     ])
+// }
+//}
 
 // function addDepartment(){
 //     return inquirer
@@ -215,30 +215,45 @@ function addRoleDepartment(departmentInfo) {
 //         connect.query(`INSERT INTO department`)
 //     )
 // }
+connect.query(`SELECT * FROM employee`, (err, results) => {
+    if(err) throw err;
+    let employeeList = results.map((employees) => {
+        return {
+            name: `${employees.first_name} ${employees.last_name}`,
+            value: employees.id 
+        }
+    })
+    updateEmployeeRole(employeeList); 
+})
 
-
-// //update functions 
-// function updateEmployeeRole() {
-//     return inquirer
-//     .prompt([
-//         {
-//             type: 'list',
-//             name: 'employee-list',
-//             message: "Which employee's role do you want to update?",
-//             choices: ['']
-//         },
-//         {
-//             type: 'list',
-//             name: 'role-type',
-//             message: "What is the employee's new role?",
-//             choices: ['Sales Lead', 'Sales Associate', 'Lead Engineer', 'Software Engineer', 'Account Manager', 'Accountant', 'Legal Team Lead', 'Lawyer']
-//         }
-//     ])
-// }
+//update functions 
+function updateEmployeeRole(employeeList) {
+    return inquirer
+    .prompt([
+        {
+            type: 'list',
+            name: 'employee-list',
+            message: "Which employee's role do you want to update?",
+            choices: employeeList
+        },
+        {
+            type: 'list',
+            name: 'role-type',
+            message: "What is the employee's new role?",
+            choices: viewRoles 
+        }
+    ])
+}
 
 // //delete functions 
 // function deleteEmployee() {
-
+    // let id; 
+    // connect.query(`DELETE FROM employee WHERE id = ?`, id, (err, results) => {
+    //     if(err){
+    //         console.log(err)
+    //     }
+    //     console.log(results)
+    // })
 // }
 
 
