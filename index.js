@@ -6,127 +6,106 @@ const mysql = require('mysql2');
 const ctable = require('console.table');
 
 
-const promptQuestions = employeeData => {
-    return inquirer
-        .prompt([
-            {
-                type: 'list',
-                name: 'action',
-                message: 'What would you like to do?',
-                choices: ['View All Employees', 'Add Employee', 'Remove Employee', 'Update Employee Role', 'View All Roles', 'Add Role', 'View All Departments', 'Add Department']
-            }
-        ])
-        .then(function (userInput) {
-            switch (userInput.action) {
-                case 'View All Employees':
-                    viewEmployees();
-                    break;
-                case 'Add Employee':
-                    addEmployee();
-                    break;
-                case 'Remove Employee':
-                    removeEmployee();
-                    break;
-                case 'Update Employee Role':
-                    updateEmployeeRole();
-                    break;
-                case 'View All Roles':
-                    viewRoles();
-                    break;
-                case 'Add Role':
-                    addRole();
-                    break;
-                case 'View All Departments':
-                    viewDepartments();
-                    break;
-                case 'Add Department':
-                    addDepartment();
-                    break;
-            }
-        })
-}
-// all views like this basically 
-function viewEmployees() {
-    connect.query(`SELECT * FROM employee`, (err, results) => {
-        if (err) {
-            console.log(err)
-        }
-        console.table(results);
-        promptQuestions();
-    })
-}
-
-function viewRoles() {
-    connect.query(`SELECT * FROM roles`, (err, results) => {
-        if (err) {
-            console.log(err)
-        }
-        console.table(results);
-        promptQuestions();
-    })
-}
-
-function viewDepartments() {
-    connect.query(`SELECT * FROM department`, (err, results) => {
-        if (err) {
-            console.log(err)
-        }
-        console.table(results);
-        promptQuestions();
-    })
-}
-
-connect.query(`SELECT * FROM employee`, (err, results) => {
-    if(err) throw err;
-    let employeeList = results.map((employees) => {
-        return {
-            name: `${employees.first_name} ${employees.last_name}`,
-            value: employees.id 
-        }
-    })
-    // updateEmployeeRole(employeeList); 
-    removeEmployee(employeeList); 
-
-})
-
-// all adds like this basically 
-// function addEmployee() {
+// const promptQuestions = employeeData => {
 //     return inquirer
 //         .prompt([
 //             {
-//                 type: 'text',
-//                 name: 'first-name',
-//                 message: "What is the employee's first name?"
-//             },
-//             {
-//                 type: 'text',
-//                 name: 'last-name',
-//                 message: "What is the employee's last name?"
+//                 type: 'list',
+//                 name: 'action',
+//                 message: 'What would you like to do?',
+//                 choices: ['View All Employees', 'Add Employee', 'Remove Employee', 'Update Employee Role', 'View All Roles', 'Add Role', 'View All Departments', 'Add Department']
 //             }
 //         ])
-//         .then(connect.query(`SELECT * FROM roles`, (err, results) => {
-//             if (err) {
-//                 console.log(err)
+//         .then(function (userInput) {
+//             switch (userInput.action) {
+//                 case 'View All Employees':
+//                     viewEmployees();
+//                     break;
+//                 case 'Add Employee':
+//                     addEmployee();
+//                     break;
+//                 case 'Remove Employee':
+//                     removeEmployee();
+//                     break;
+//                 case 'Update Employee Role':
+//                     updateEmployeeRole();
+//                     break;
+//                 case 'View All Roles':
+//                     viewRoles();
+//                     break;
+//                 case 'Add Role':
+//                     addRole();
+//                     break;
+//                 case 'View All Departments':
+//                     viewDepartments();
+//                     break;
+//                 case 'Add Department':
+//                     addDepartment();
+//                     break;
 //             }
+//         })
+// }
+// // all views like this basically 
+// function viewEmployees() {
+//     connect.query(`SELECT * FROM employee`, (err, results) => {
+//         if (err) {
+//             console.log(err)
+//         }
+//         console.table(results);
+//         promptQuestions();
+//     })
+// }
 
-//             let roleInfo = results.map((role) => {
-//                 return {
-//                     name: role.title,
-//                     value: role.id
-//                 }
-//             })
-//             function addEmployeeRole(roleInfo) {
-//                 return inquirer
-//                     .prompt([
-//                         {
-//                             type: 'list',
-//                             name: 'employee-role',
-//                             message: "What is the employee's role?",
-//                             choices: roleInfo
-//                             // in the middle, query to get roles, map through them, so we can get title that goes with id, display title and assign id. 
-//                         }
+// function viewRoles() {
+//     connect.query(`SELECT * FROM roles`, (err, results) => {
+//         if (err) {
+//             console.log(err)
+//         }
+//         console.table(results);
+//         promptQuestions();
+//     })
+// }
 
-//                     ])
+// function viewDepartments() {
+//     connect.query(`SELECT * FROM department`, (err, results) => {
+//         if (err) {
+//             console.log(err)
+//         }
+//         console.table(results);
+//         promptQuestions();
+//     })
+// }
+
+
+// all adds like this basically 
+// function addEmployee() {
+    // return inquirer
+    //     .prompt([
+    //         {
+    //             type: 'text',
+    //             name: 'first-name',
+    //             message: "What is the employee's first name?"
+    //         },
+    //         {
+    //             type: 'text',
+    //             name: 'last-name',
+    //             message: "What is the employee's last name?"
+    //         }
+    //     ])
+    // }
+    //         function addEmployeeRole(roleInfo) {
+    //             return inquirer
+    //                 .prompt([
+    //                     {
+    //                         type: 'list',
+    //                         name: 'employee-role',
+    //                         message: "What is the employee's role?",
+    //                         choices: roleInfo
+    //                         // in the middle, query to get roles, map through them, so we can get title that goes with id, display title and assign id. 
+    //                     }
+
+    //                 ])
+    //         }             
 //                     .then(
 //                         connect.query(`SELECT * FROM manager`, (err, results) => {
 //                             if (err) {
@@ -222,49 +201,83 @@ connect.query(`SELECT * FROM employee`, (err, results) => {
 // }
 
 
+connect.query(`SELECT * FROM employee`, (err, results) => {
+    if(err) throw err;
+    let employeeList = results.map((employees) => {
+        return {
+            name: `${employees.first_name} ${employees.last_name}`,
+            value: employees.id 
+        }
+    })
+    updateEmployeeRole(employeeList); 
+    // removeEmployee(employeeList); 
 
-//update functions 
-// function updateEmployeeRole(employeeList, employeeRole) {
+})
+
+connect.query(`SELECT * FROM roles`, (err, results) => {
+    if (err) {
+        console.log(err)
+    }
+    
+    let roleInfo = results.map((role) => {
+        return {
+            name: role.title,
+            value: role.id
+            }
+    })
+    updateRoleEmployeeRole(roleInfo); 
+})
+// //delete functions 
+// function removeEmployee(employeeList) {
 //     return inquirer
-//     .prompt([
+//     .prompt([ 
 //         {
 //             type: 'list',
-//             name: 'employee-list',
-//             message: "Which employee's role do you want to update?",
+//             name:'removeEmployee',
+//             message: 'Which employee would you like to remove?',
 //             choices: employeeList
-//         },
-//         {
-//             type: 'list',
-//             name: 'role-type',
-//             message: "What is the employee's new role?",
-//             choices: employeeRole
 //         }
-//     ]).then(
-//         connect.query(`UPDATE employee SET role_id = ${value}`)
-//     )
+//     ]).then((removedEmployee) => {
+//         console.log(removedEmployee)
+//         let employeeID = removedEmployee.removeEmployee
+//         console.log(employeeID)
+        
+//         connect.query(`DELETE FROM employee WHERE id = ${employeeID};`, (err, result) => {
+//         if(err) throw err
+//         console.log(`Employee has been removed`)
+//         })
+//     })
 // }
 
-//delete functions 
-function removeEmployee(employeeList) {
+
+//update functions 
+function updateEmployeeRole(employeeList) {
     return inquirer
-    .prompt([ 
+    .prompt([
         {
             type: 'list',
-            name:'removeEmployee',
-            message: 'Which employee would you like to remove?',
+            name: 'employee-list',
+            message: "Which employee's role do you want to update?",
             choices: employeeList
         }
-    ]).then((removedEmployee) => {
-        console.log(removedEmployee)
-        let employeeID = removedEmployee.removeEmployee
-        console.log(employeeID)
-        
-        connect.query(`DELETE FROM employee WHERE id = ${employeeID};`, (err, result) => {
-        if(err) throw err
-        console.log(`Employee has been removed`)
-        })
-    })
+    ])
+}
+
+function updateRoleEmployeeRole(roleInfo) {
+    console.log(roleInfo)
+return inquirer
+.prompt([
+    {
+        type: 'list',
+        name: 'role-type',
+        message: "What is the employee's new role?",
+        choices: roleInfo
+    }
+])
+// .then(
+//     // connect.query(`UPDATE employee SET role_id = ${value}`)
+//     )
 }
 
 
-promptQuestions(); 
+// promptQuestions(); 
