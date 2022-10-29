@@ -13,7 +13,7 @@ const promptQuestions = employeeData => {
                 type: 'list',
                 name: 'action',
                 message: 'What would you like to do?',
-                choices: ['View All Employees', 'Add Employee', 'Remove Employee', 'Update Employee Role', 'View All Roles', 'Add Role', 'View All Departments', 'Add Department']
+                choices: ['View All Employees', 'Add Employee', 'Remove Employee', 'Update Employee Role', 'View All Roles', 'Add Role', 'View All Departments', 'Add Department', 'Quit']
             }
         ])
         .then(function (userInput) {
@@ -42,6 +42,9 @@ const promptQuestions = employeeData => {
                 case 'Add Department':
                     addDepartment();
                     break;
+                case 'Quit':
+                    endEdit();
+                    break; 
             }
         })
 }
@@ -204,6 +207,7 @@ function addRole() {
     }
 }
 
+
 //delete functions 
 function removeEmployee() {
     connect.query(`SELECT * FROM employee`, (err, results) => {
@@ -239,6 +243,7 @@ function removeEmployee() {
             })
     }
 }
+
 
 //update functions 
 function updateEmployeeRole() {
@@ -302,5 +307,8 @@ function updateEmployeeRole() {
     }
 }
 
+function endEdit() {
+    process.exit(); 
+}
 
 promptQuestions(); 
