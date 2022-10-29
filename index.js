@@ -44,7 +44,7 @@ const promptQuestions = employeeData => {
                     break;
                 case 'Quit':
                     endEdit();
-                    break; 
+                    break;
             }
         })
 }
@@ -95,7 +95,9 @@ function addEmployee() {
                     name: 'last-name',
                     message: "What is the employee's last name?"
                 }
-            ])
+            ]).then(() => {
+                addEmployeeRole()
+            })
     }
 
     connect.query(`SELECT * FROM roles`, (err, results) => {
@@ -122,7 +124,9 @@ function addEmployee() {
                     choices: roleInfo
                     // in the middle, query to get roles, map through them, so we can get title that goes with id, display title and assign id. 
                 }
-            ])
+            ]).then(() => {
+                addEmployeeManager()
+            })
     }
     connect.query(`SELECT * FROM manager`, (err, results) => {
         if (err) {
@@ -162,7 +166,9 @@ function addRole() {
                     name: 'salary',
                     message: 'What is the salary of the role?'
                 }
-            ])
+            ]).then(() => {
+                addRoleDepartment()
+            })
     }
 
     connect.query(`SELECT * FROM department`, (err, results) => {
@@ -188,7 +194,9 @@ function addRole() {
                     message: 'Which department does the role belong to?',
                     choices: departmentInfo
                 }
-            ])
+            ]).then(() => {
+                addDepartment()
+            })
     }
 
     function addDepartment() {
@@ -247,68 +255,72 @@ function removeEmployee() {
 
 //update functions 
 function updateEmployeeRole() {
-    connect.query(`SELECT * FROM employee`, (err, results) => {
-        if (err) throw err;
-        let employeeList = results.map((employees) => {
-            return {
-                name: `${employees.first_name} ${employees.last_name}`,
-                value: employees.id
-            }
-        })
-        roleEmployeeList(employeeList);
-    })
     
-    function roleEmployeeList(employeeList) {
-        return inquirer
-            .prompt([
-                {
-                    type: 'list',
-                    name: 'employee-list',
-                    message: "Which employee's role do you want to update?",
-                    choices: employeeList
+        connect.query(`SELECT * FROM employee`, (err, results) => {
+            if (err) throw err;
+            let employeeList = results.map((employees) => {
+                return {
+                    name: `${employees.first_name} ${employees.last_name}`,
+                    value: employees.id
                 }
-            ])
-    }
-
-    connect.query(`SELECT * FROM roles`, (err, results) => {
-        if (err) {
-            console.log(err)
-        }
-
-        let roleInfo = results.map((role) => {
-            return {
-                name: role.title,
-                value: role.id
-            }
-        })
-        updateRoleEmployeeRole(roleInfo);
-    })
-
-    function updateRoleEmployeeRole(roleInfo) {
-        console.log(roleInfo)
-        return inquirer
-            .prompt([
-                {
-                    type: 'list',
-                    name: 'newRole',
-                    message: "What is the employee's new role?",
-                    choices: roleInfo
-                }
-            ]).then((updatedRole) => {
-                console.log(updatedRole) 
-                let roleID = updatedRole.newRole
-                console.log(roleID)
-                // somehow need to indicate the eployee id as well? a join? 
-                connect.query(`INSERT INTO employee WHERE id = ${roleID};`, (err, result) => {
-                    if (err) throw err
-                    console.log(`Employee role has been updated`)
-                })
             })
-    }
+            roleEmployeeList(employeeList);
+        })
+
+        function roleEmployeeList(employeeList) {
+            return inquirer
+                .prompt([
+                    {
+                        type: 'list',
+                        name: 'employee-list',
+                        message: "Which employee's role do you want to update?",
+                        choices: employeeList
+                    }
+                ]).then(() => { chooseNewRole()})
+        }
+    
+    function chooseNewRole() {
+        connect.query(`SELECT * FROM roles`, (err, results) => {
+            if (err) {
+                console.log(err)
+            }
+
+            let roleInfo = results.map((role) => {
+                return {
+                    name: role.title,
+                    value: role.id
+                }
+            })
+            updateRoleEmployeeRole(roleInfo);
+        })
+
+        function updateRoleEmployeeRole(roleInfo) {
+            console.log(roleInfo)
+            return inquirer
+                .prompt([
+                    {
+                        type: 'list',
+                        name: 'newRole',
+                        message: "What is the employee's new role?",
+                        choices: roleInfo
+                    }
+                ]).then((updatedRole) => {
+                    console.log(updatedRole)
+                    let roleID = updatedRole.newRole
+                    console.log(roleID)
+                    // somehow need to indicate the eployee id as well? a join? 
+                    connect.query(`INSERT INTO employee WHERE id = ${roleID};`, (err, result) => {
+                        if (err) throw err
+                        console.log(`Employee role has been updated`)
+                    })
+                })
+        }
+    
+}
 }
 
 function endEdit() {
-    process.exit(); 
+    process.exit();
 }
 
 promptQuestions(); 
