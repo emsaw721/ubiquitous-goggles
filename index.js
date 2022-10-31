@@ -94,10 +94,16 @@ function addEmployee() {
                     name: 'last_name',
                     message: "What is the employee's last name?"
                 }
-            ]).then(() => {addEmployeeRole()})
+            ]).then((person) => {
+                addEmployeeRole(person)})
+
+      
     
 
-    function addEmployeeRole() {
+    function addEmployeeRole(person) {
+        let employeeName = person; 
+        console.log(employeeName)
+     
         connect.query(`SELECT * FROM roles`, (err, results) => {
             if (err) {
                 console.log(err)
@@ -109,6 +115,7 @@ function addEmployee() {
                     value: role.id
                 }
             })
+           
           askEmployeeRole(roleInfo)
         })
         function askEmployeeRole(roleInfo) {
@@ -121,11 +128,16 @@ function addEmployee() {
                     choices: roleInfo
                     // in the middle, query to get roles, map through them, so we can get title that goes with id, display title and assign id. 
                 }
-            ]).then(() => { addEmployeeManager()})
+            ]).then((role) => { 
+                let newRole = role; 
+                let employeeNameRole = Object.assign(employeeName, newRole); 
+                console.log(employeeNameRole) 
+                addEmployeeManager(employeeNameRole)})
         }
     }
 
-    function addEmployeeManager() {
+    function addEmployeeManager(employeeNameRole) {
+        console.log(employeeNameRole)
         connect.query(`SELECT * FROM manager`, (err, results) => {
             if (err) {
                 console.log(err)
@@ -147,13 +159,28 @@ function addEmployee() {
                     message: "Who is the employee's manager?",
                     choices: employManager
                 }
-            ])
+            ]).then((manager) => {
+                let newManager = manager; 
+                let employeeFacts = Object.assign(employeeNameRole, newManager)
+                console.log(employeeFacts)
+                insertEmployee(employeeFacts)
+            })
         }
+    }
+
+    function insertEmployee(employeeFacts) {
+        console.log(employeeFacts.first_name) 
+        connect.query(`INSERT INTO employee(first_name, last_name, role_id, manager_id)VALUES('${employeeFacts.first_name}','${employeeFacts.last_name}','${employeeFacts.role_id}','${employeeFacts.manager_id}')`, (err, result) => {
+            if(err) throw err
+
+            console.log(`${employeeFacts.first_name} ${employeeFacts.last_name} added to database.`)
+        })
     }
 }
 
+
 function addRole() {
-    function plusRole() {
+
         return inquirer
             .prompt([
                 {
@@ -166,26 +193,26 @@ function addRole() {
                     name: 'salary',
                     message: 'What is the salary of the role?'
                 }
-            ]).then(() => {
-                addRoleDepartment()
+            ]).then((roleNameSalary) => {
+                addRoleDepartment(roleNameSalary)
             })
-    }
 
-    connect.query(`SELECT * FROM department`, (err, results) => {
-        if (err) {
-            console.log(err)
-        }
-        let departmentInfo = results.map((department) => {
-            return {
-                name: department.names,
-                value: department.id
+    function addRoleDepartment(roleNameSalary) {
+        
+        connect.query(`SELECT * FROM department`, (err, results) => {
+            if (err) {
+                console.log(err)
             }
-
+            let departmentInfo = results.map((department) => {
+                return {
+                    name: department.names,
+                    value: department.id
+                }
+    
+            })
+            chooseDepartment(departmentInfo);
         })
-        addRoleDepartment(departmentInfo);
-    })
-
-    function addRoleDepartment(departmentInfo) {
+        function chooseDepartment() {
         return inquirer
             .prompt([
                 {
@@ -197,7 +224,9 @@ function addRole() {
             ]).then(() => {
                 addDepartment()
             })
+        }
     }
+
 
     function addDepartment() {
         return inquirer
@@ -216,111 +245,111 @@ function addRole() {
 }
 
 
-//delete functions 
-function removeEmployee() {
-    connect.query(`SELECT * FROM employee`, (err, results) => {
-        if (err) throw err;
-        let employeeList = results.map((employees) => {
-            return {
-                name: `${employees.first_name} ${employees.last_name}`,
-                value: employees.id
-            }
-        })
-        deleteEmployee(employeeList);
-        // removeEmployee(employeeList); 
+// //delete functions 
+// function removeEmployee() {
+//     connect.query(`SELECT * FROM employee`, (err, results) => {
+//         if (err) throw err;
+//         let employeeList = results.map((employees) => {
+//             return {
+//                 name: `${employees.first_name} ${employees.last_name}`,
+//                 value: employees.id
+//             }
+//         })
+//         deleteEmployee(employeeList);
+//         // removeEmployee(employeeList); 
 
-    })
-    function deleteEmployee(employeeList) {
-        return inquirer
-            .prompt([
-                {
-                    type: 'list',
-                    name: 'removeEmployee',
-                    message: 'Which employee would you like to remove?',
-                    choices: employeeList
-                }
-            ]).then((removedEmployee) => {
-                console.log(removedEmployee)
-                let employeeID = removedEmployee.removeEmployee
-                console.log(employeeID)
+//     })
+//     function deleteEmployee(employeeList) {
+//         return inquirer
+//             .prompt([
+//                 {
+//                     type: 'list',
+//                     name: 'removeEmployee',
+//                     message: 'Which employee would you like to remove?',
+//                     choices: employeeList
+//                 }
+//             ]).then((removedEmployee) => {
+//                 console.log(removedEmployee)
+//                 let employeeID = removedEmployee.removeEmployee
+//                 console.log(employeeID)
 
-                connect.query(`DELETE FROM employee WHERE id = ${employeeID};`, (err, result) => {
-                    if (err) throw err
-                    console.log(`Employee has been removed`)
-                })
-            })
-    }
-}
+//                 connect.query(`DELETE FROM employee WHERE id = ${employeeID};`, (err, result) => {
+//                     if (err) throw err
+//                     console.log(`Employee has been removed`)
+//                 })
+//             })
+//     }
+// }
 
 
-//update functions 
-function updateEmployeeRole() {
+// //update functions 
+// function updateEmployeeRole() {
     
-        connect.query(`SELECT * FROM employee`, (err, results) => {
-            if (err) throw err;
-            let employeeList = results.map((employees) => {
-                return {
-                    name: `${employees.first_name} ${employees.last_name}`,
-                    value: employees.id
-                }
-            })
-            roleEmployeeList(employeeList);
-        })
+//         connect.query(`SELECT * FROM employee`, (err, results) => {
+//             if (err) throw err;
+//             let employeeList = results.map((employees) => {
+//                 return {
+//                     name: `${employees.first_name} ${employees.last_name}`,
+//                     value: employees.id
+//                 }
+//             })
+//             roleEmployeeList(employeeList);
+//         })
 
-        function roleEmployeeList(employeeList) {
-            return inquirer
-                .prompt([
-                    {
-                        type: 'list',
-                        name: 'employee-list',
-                        message: "Which employee's role do you want to update?",
-                        choices: employeeList
-                    }
-                ]).then(() => { chooseNewRole()})
-        }
+//         function roleEmployeeList(employeeList) {
+//             return inquirer
+//                 .prompt([
+//                     {
+//                         type: 'list',
+//                         name: 'employee-list',
+//                         message: "Which employee's role do you want to update?",
+//                         choices: employeeList
+//                     }
+//                 ]).then(() => { chooseNewRole()})
+//         }
     
-    function chooseNewRole() {
-        connect.query(`SELECT * FROM roles`, (err, results) => {
-            if (err) {
-                console.log(err)
-            }
+//     function chooseNewRole() {
+//         connect.query(`SELECT * FROM roles`, (err, results) => {
+//             if (err) {
+//                 console.log(err)
+//             }
 
-            let roleInfo = results.map((role) => {
-                return {
-                    name: role.title,
-                    value: role.id
-                }
-            })
-            updateRoleEmployeeRole(roleInfo);
-        })
+//             let roleInfo = results.map((role) => {
+//                 return {
+//                     name: role.title,
+//                     value: role.id
+//                 }
+//             })
+//             updateRoleEmployeeRole(roleInfo);
+//         })
 
-        function updateRoleEmployeeRole(roleInfo) {
-            console.log(roleInfo)
-            return inquirer
-                .prompt([
-                    {
-                        type: 'list',
-                        name: 'newRole',
-                        message: "What is the employee's new role?",
-                        choices: roleInfo
-                    }
-                ]).then((updatedRole) => {
-                    console.log(updatedRole)
-                    let roleID = updatedRole.newRole
-                    console.log(roleID)
-                    // somehow need to indicate the eployee id as well? a join? 
-                    connect.query(`INSERT INTO employee WHERE id = ${roleID};`, (err, result) => {
-                        if (err) throw err
-                        console.log(`Employee role has been updated`)
-                    })
-                })
-        }
+//         function updateRoleEmployeeRole(roleInfo) {
+//             console.log(roleInfo)
+//             return inquirer
+//                 .prompt([
+//                     {
+//                         type: 'list',
+//                         name: 'newRole',
+//                         message: "What is the employee's new role?",
+//                         choices: roleInfo
+//                     }
+//                 ]).then((updatedRole) => {
+//                     console.log(updatedRole)
+//                     let roleID = updatedRole.newRole
+//                     console.log(roleID)
+//                     // somehow need to indicate the eployee id as well? a join? 
+//                     connect.query(`INSERT INTO employee WHERE id = ${roleID};`, (err, result) => {
+//                         if (err) throw err
+//                         console.log(`Employee role has been updated`)
+//                     })
+//                 })
+//         }
     
-}
-}
+// }
+// }
 
-function endEdit() {
-    process.exit();
-}
+// function endEdit() {
+//     process.exit();
+// }
 
-promptQuestions(); 
+// promptQuestions(); 
