@@ -4,5 +4,24 @@
     "express": "^4.18.2",
     "inquirer": "^8.2.4",
     "mysql2": "^2.3.3"
-  }
+  },
+  "name": "ubiquitous-goggles",
+  "description": "## Description  This project is a command-line application that manages a company's employee database using a content management system or a user interface that allows him or her or them to easily view and interact with information stored in the database.",
+  "version": "1.0.0",
+  "main": "index.js",
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/emsaw721/ubiquitous-goggles.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/emsaw721/ubiquitous-goggles/issues"
+  },
+  "homepage": "https://github.com/emsaw721/ubiquitous-goggles#readme"
 }

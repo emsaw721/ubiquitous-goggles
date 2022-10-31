@@ -5,7 +5,6 @@ const mysql = require('mysql2');
 // use this to print out data? but why do we need this?
 const ctable = require('console.table');
 
-
 const promptQuestions = employeeData => {
     return inquirer
         .prompt([
@@ -82,73 +81,74 @@ function viewDepartments() {
 
 // all adds like this basically 
 function addEmployee() {
-    function createEmployee() {
+  
         return inquirer
             .prompt([
                 {
                     type: 'text',
-                    name: 'first-name',
+                    name: 'first_name',
                     message: "What is the employee's first name?"
                 },
                 {
                     type: 'text',
-                    name: 'last-name',
+                    name: 'last_name',
                     message: "What is the employee's last name?"
                 }
-            ]).then(() => {
-                addEmployeeRole()
-            })
-    }
+            ]).then(() => {addEmployeeRole()})
+    
 
-    connect.query(`SELECT * FROM roles`, (err, results) => {
-        if (err) {
-            console.log(err)
-        }
-
-        let roleInfo = results.map((role) => {
-            return {
-                name: role.title,
-                value: role.id
+    function addEmployeeRole() {
+        connect.query(`SELECT * FROM roles`, (err, results) => {
+            if (err) {
+                console.log(err)
             }
+    
+            let roleInfo = results.map((role) => {
+                return {
+                    name: role.title,
+                    value: role.id
+                }
+            })
+          askEmployeeRole(roleInfo)
         })
-        addEmployeeRole(roleInfo);
-    })
-
-    function addEmployeeRole(roleInfo) {
+        function askEmployeeRole(roleInfo) {
         return inquirer
             .prompt([
                 {
                     type: 'list',
-                    name: 'employee-role',
+                    name: 'role_id',
                     message: "What is the employee's role?",
                     choices: roleInfo
                     // in the middle, query to get roles, map through them, so we can get title that goes with id, display title and assign id. 
                 }
-            ]).then(() => {
-                addEmployeeManager()
-            })
-    }
-    connect.query(`SELECT * FROM manager`, (err, results) => {
-        if (err) {
-            console.log(err)
+            ]).then(() => { addEmployeeManager()})
         }
-        let employManager = results.map((manager) => {
-            return {
-                name: `${manager.first_name} ${manager.last_name}`,
-                value: manager.id
+    }
+
+    function addEmployeeManager() {
+        connect.query(`SELECT * FROM manager`, (err, results) => {
+            if (err) {
+                console.log(err)
             }
+            let employManager = results.map((manager) => {
+                return {
+                    name: `${manager.first_name} ${manager.last_name}`,
+                    value: manager.id
+                }
+            })
+            askEmployeeManager(employManager) 
         })
-    })
-    function addEmployeeManager(employManager) {
+        function askEmployeeManager(employManager) {
         return inquirer
             .prompt([
                 {
                     type: 'list',
-                    name: 'employee-manager',
+                    name: 'manager_id',
                     message: "Who is the employee's manager?",
                     choices: employManager
                 }
             ])
+        }
     }
 }
 
