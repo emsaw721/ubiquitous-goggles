@@ -186,7 +186,6 @@ function addEmployee() {
     }
 }
 
-
 function addRole() {
 
     return inquirer
@@ -441,6 +440,7 @@ function updateEmployeeManager() {
 }
 
 
+// exit node 
 function endEdit() {
     process.exit();
 }
