@@ -51,6 +51,8 @@ const promptQuestions = employeeData => {
         })
 }
 // all views like this basically 
+// add view employees by manager and view employees by department for extra credit 
+// add view total budget (combined employee salary) by department for extra credit 
 function viewEmployees() {
     connect.query(`SELECT * FROM employee`, (err, results) => {
         if (err) {
@@ -179,6 +181,7 @@ function addEmployee() {
             if (err) throw err
 
             console.log(`${employeeFacts.first_name} ${employeeFacts.last_name} added to database.`)
+            promptQuestions(); 
         })
     }
 }
@@ -238,14 +241,34 @@ function addRole() {
         function insertRole(newRoleInfo) {
             connect.query(`INSERT INTO roles(title, salary, department_id) VALUES('${newRoleInfo.title}', '${newRoleInfo.salary}', '${newRoleInfo.department_id}')`, (err, result) => {
                 if (err) throw err
-                console.log(`${newRoleInfo.title} added to database.`)
+                console.log(`${newRoleInfo.title} added to database.`); 
+                promptQuestions(); 
             })
         }
     }
 }
 
+function addDepartment() {
+    return inquirer
+    .prompt([
+        {
+            type: 'text',
+            name: 'names',
+            message: 'What is the department called?'
+        }
+    ]).then((department) => {
+        console.log(department)
+        connect.query(`INSERT INTO department(names) VALUES('${department.names}')`, (err, result) => {
+            if(err) throw err
+            console.log(`${department.names} added to departments.`)
+        })
+        promptQuestions(); 
+    })
+}
+
 
 //delete functions 
+// add delete department, role, and manager for extra credit 
 function removeEmployee() {
     connect.query(`SELECT * FROM employee`, (err, results) => {
         if (err) throw err;
@@ -277,6 +300,7 @@ function removeEmployee() {
                     if (err) throw err
                     console.log(`Employee has been removed`)
                 })
+                promptQuestions(); 
             })
     }
 }
@@ -342,6 +366,7 @@ function updateEmployeeRole() {
                         if (err) throw err
                         console.log(`Employee role has been updated`)
                     })
+                    promptQuestions(); 
                 })
         }
 
@@ -409,11 +434,11 @@ function updateEmployeeManager() {
 
                         console.log(`The employee's manger has been updated.`)
                     })
+                    promptQuestions(); 
                 })
         }
     }
 }
-
 
 
 function endEdit() {
