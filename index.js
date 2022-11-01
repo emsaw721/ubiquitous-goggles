@@ -12,7 +12,7 @@ const promptQuestions = employeeData => {
                 type: 'list',
                 name: 'action',
                 message: 'What would you like to do?',
-                choices: ['View All Employees', 'Add Employee', 'Remove Employee', 'Update Employee Role', 'View All Roles', 'Add Role', 'View All Departments', 'Add Department', 'Quit']
+                choices: ['View All Employees', 'Add Employee', 'Remove Employee', 'Update Employee Role', 'Update Employee Manager', 'View All Roles', 'Add Role', 'View All Departments', 'Add Department', 'Quit']
             }
         ])
         .then(function (userInput) {
@@ -30,7 +30,7 @@ const promptQuestions = employeeData => {
                     updateEmployeeRole();
                     break;
                 case 'Update Employee Manager':
-                    upateEmployeeManager();
+                    updateEmployeeManager();
                     break;
                 case 'View All Roles':
                     viewRoles();
@@ -352,10 +352,10 @@ function updateEmployeeManager() {
 
     connect.query(`SELECT * FROM employee`, (err, results) => {
         if (err) throw err;
-        let employeeList = results.map((employees) => {
+        let employeeList = results.map((employee) => {
             return {
-                name: `${employees.first_name} ${employees.last_name}`,
-                value: employees.id
+                name: `${employee.first_name} ${employee.last_name}`,
+                value: employee.id
             }
         })
         managerEmployeeList(employeeList);
@@ -366,15 +366,16 @@ function updateEmployeeManager() {
             .prompt([
                 {
                     type: 'list',
-                    name: 'employee-list',
+                    name: 'id',
                     message: "Which employee's role do you want to update?",
                     choices: employeeList
                 }
-            ]).then((employee) => { chooseNewManager(employee) })
+            ]).then((employeeSelected) => { chooseNewManager(employeeSelected) })
     }
 
-    function chooseNewManager(employee) {
-        let chosenEmployee = employee;
+    function chooseNewManager(employeeSelected) {
+        let chosenEmployee = employeeSelected;
+        console.log(chosenEmployee)
         connect.query(`SELECT * FROM manager`, (err, results) => {
             if (err) {
                 console.log(err)
@@ -395,22 +396,21 @@ function updateEmployeeManager() {
                 .prompt([
                     {
                         type: 'list',
-                        name: 'newRole',
+                        name: 'manager_id',
                         message: "What is the employee's new manager?",
                         choices: managerInfo
                     }
                 ]).then((updatedManager) => {
                     console.log(updatedManager)
-                    let roleID = updatedRole.newRole
-                    console.log(roleID)
-                    // somehow need to indicate the eployee id as well? a join? 
-                    connect.query(`INSERT INTO employee WHERE id = ${roleID};`, (err, result) => {
+                    let newManager = Object.assign(chosenEmployee, updatedManager)
+                    console.log(newManager)
+                    connect.query(`UPDATE employee SET manager_id = '${newManager.manager_id}' WHERE id = '${newManager.id}';`, (err, result) => {
                         if (err) throw err
-                        console.log(`Employee role has been updated`)
+
+                        console.log(`The employee's manger has been updated.`)
                     })
                 })
         }
-
     }
 }
 
