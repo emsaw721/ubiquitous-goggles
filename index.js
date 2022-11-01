@@ -12,7 +12,7 @@ const promptQuestions = employeeData => {
                 type: 'list',
                 name: 'action',
                 message: 'What would you like to do?',
-                choices: ['View All Employees', 'Add Employee', 'Remove Employee', 'Update Employee Role', 'Update Employee Manager', 'View All Roles', 'Add Role', 'View All Departments', 'Add Department', 'Quit']
+                choices: ['View All Employees', 'View Employees By Manager', 'Add Employee', 'Remove Employee', 'Update Employee Role', 'Update Employee Manager', 'View All Roles', 'Add Role','Remove Role', 'View All Departments', 'Add Department', 'Remove Department', 'View Department Budget', 'Quit']
             }
         ])
         .then(function (userInput) {
@@ -20,6 +20,12 @@ const promptQuestions = employeeData => {
                 case 'View All Employees':
                     viewEmployees();
                     break;
+                case 'View Employee By Manager':
+                    viewEmployeesByManager(); 
+                    break; 
+                case 'View Employee By Department':
+                    viewEmployeesByDepartment();
+                    break; 
                 case 'Add Employee':
                     addEmployee();
                     break;
@@ -38,12 +44,21 @@ const promptQuestions = employeeData => {
                 case 'Add Role':
                     addRole();
                     break;
+                case 'Remove Role':
+                    removeRole();
+                    break; 
                 case 'View All Departments':
                     viewDepartments();
                     break;
                 case 'Add Department':
                     addDepartment();
                     break;
+                case 'Remove Department':
+                    removeDepartment(); 
+                    break; 
+                case 'View Department Budget':
+                    viewTotalDepartmentBudget();
+                    break; 
                 case 'Quit':
                     endEdit();
                     break;
@@ -61,6 +76,24 @@ function viewEmployees() {
         console.table(results);
         promptQuestions();
     })
+}
+
+// get manager id and reference it with employee manager_id 
+function viewEmployeesByManager() {
+    connect.query(`SELECT id FROM managers`, (err,results) => {
+        if(err) throw err
+        let managersID = results 
+    })
+
+    connect.query(`SELECT * FROM employee WHERE manager_id = ?`, managersID, (err, results) => {
+        if(err) throw err
+        console.table(results)
+        promptQuestions(); 
+    })
+}
+
+function viewEmployeesByDepartment() {
+
 }
 
 function viewRoles() {
@@ -267,7 +300,6 @@ function addDepartment() {
 
 
 //delete functions 
-// add delete department, role, and manager for extra credit 
 function removeEmployee() {
     connect.query(`SELECT * FROM employee`, (err, results) => {
         if (err) throw err;
@@ -297,13 +329,80 @@ function removeEmployee() {
 
                 connect.query(`DELETE FROM employee WHERE id = ${employeeID};`, (err, result) => {
                     if (err) throw err
-                    console.log(`Employee has been removed`)
+                    console.log(`Employee has been removed from database.`)
                 })
                 promptQuestions(); 
             })
     }
 }
 
+function removeDepartment(){
+    connect.query(`SELECT * FROM department`, (err,results) => {
+        if (err) throw err;
+        let departmentList = results.map((departments) => {
+            return { 
+                name: departments.names,
+                value: departments.id
+            }
+        })
+        deleteDepartment(departmentList)
+    })
+
+    function deleteDepartment(departmentList) {
+        return inquirer 
+        .prompt ([
+            {
+                type: 'list',
+                name: 'removeDepartment',
+                message: 'Which department would you like to remove?',
+                choices: departmentList
+            }
+        ]).then((removedDepartment) => {
+            console.log(removedDepartment)
+            let departmentID = removedDepartment.removeDepartment
+            console.log(departmentID)
+
+            connect.query(`DELETE FROM department WHERE id= ${departmentID}`, (err,results) => {
+                if(err) throw err
+                console.log(`Department has been removed from database.`)
+            })
+        })
+    }
+}
+
+function removeRole(){
+    connect.query(`SELECT * FROM roles`, (err,results) => {
+        if(err) throw err;
+        let rolesList = results.map((roles) => {
+            return {
+                name: roles.title,
+                value: roles.id
+            }
+        })
+        deleteRole(rolesList)
+    })
+    function deleteRole(rolesList) {
+        return inquirer 
+        .prompt([
+            {
+                type: 'list',
+                name: 'removeRole',
+                message: 'Which role would you like to remove?',
+                choices: rolesList
+            }
+        ]).then((removedRole) => {
+            console.log(removedRole)
+            let roleID = removedRole.removeRole
+            console.log(roleID)
+
+            connect.query(`DELETE FROM roles WHERE id = ${roleID}`, (err,results) => {
+                if(err) throw err
+                console.log(`Role has been removed from database.`)
+            })
+        })
+    }
+
+}
 
 //update functions 
 function updateEmployeeRole() {
@@ -437,6 +536,14 @@ function updateEmployeeManager() {
                 })
         }
     }
+}
+
+// get salary from roles but cross reference it with employees 
+function viewTotalDepartmentBudget() {
+    connect.query(`SELECT * FROM departments JOIN (SELECT department.id, COUNT(*) AS number_of_employees FROM employee GROUP BY department.id) department_info USING (department.id)`, (err, results) => {
+                    if(err) throw err
+                    console.table(results)
+                    })
 }
 
 
