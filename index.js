@@ -31,7 +31,7 @@ const promptQuestions = employeeData => {
                     break;
                 case 'Update Employee Manager':
                     upateEmployeeManager();
-                    break; 
+                    break;
                 case 'View All Roles':
                     viewRoles();
                     break;
@@ -84,58 +84,60 @@ function viewDepartments() {
 
 // all adds like this basically 
 function addEmployee() {
-  
-        return inquirer
-            .prompt([
-                {
-                    type: 'text',
-                    name: 'first_name',
-                    message: "What is the employee's first name?"
-                },
-                {
-                    type: 'text',
-                    name: 'last_name',
-                    message: "What is the employee's last name?"
-                }
-            ]).then((person) => {
-                addEmployeeRole(person)})
 
-      
-    
+    return inquirer
+        .prompt([
+            {
+                type: 'text',
+                name: 'first_name',
+                message: "What is the employee's first name?"
+            },
+            {
+                type: 'text',
+                name: 'last_name',
+                message: "What is the employee's last name?"
+            }
+        ]).then((person) => {
+            addEmployeeRole(person)
+        })
+
+
+
 
     function addEmployeeRole(person) {
-        let employeeName = person; 
+        let employeeName = person;
         console.log(employeeName)
-     
+
         connect.query(`SELECT * FROM roles`, (err, results) => {
             if (err) {
                 console.log(err)
             }
-    
+
             let roleInfo = results.map((role) => {
                 return {
                     name: role.title,
                     value: role.id
                 }
             })
-           
-          askEmployeeRole(roleInfo)
+
+            askEmployeeRole(roleInfo)
         })
         function askEmployeeRole(roleInfo) {
-        return inquirer
-            .prompt([
-                {
-                    type: 'list',
-                    name: 'role_id',
-                    message: "What is the employee's role?",
-                    choices: roleInfo
-                    // in the middle, query to get roles, map through them, so we can get title that goes with id, display title and assign id. 
-                }
-            ]).then((role) => { 
-                let newRole = role; 
-                let employeeNameRole = Object.assign(employeeName, newRole); 
-                console.log(employeeNameRole) 
-                addEmployeeManager(employeeNameRole)})
+            return inquirer
+                .prompt([
+                    {
+                        type: 'list',
+                        name: 'role_id',
+                        message: "What is the employee's role?",
+                        choices: roleInfo
+                        // in the middle, query to get roles, map through them, so we can get title that goes with id, display title and assign id. 
+                    }
+                ]).then((role) => {
+                    let newRole = role;
+                    let employeeNameRole = Object.assign(employeeName, newRole);
+                    console.log(employeeNameRole)
+                    addEmployeeManager(employeeNameRole)
+                })
         }
     }
 
@@ -151,30 +153,30 @@ function addEmployee() {
                     value: manager.id
                 }
             })
-            askEmployeeManager(employManager) 
+            askEmployeeManager(employManager)
         })
         function askEmployeeManager(employManager) {
-        return inquirer
-            .prompt([
-                {
-                    type: 'list',
-                    name: 'manager_id',
-                    message: "Who is the employee's manager?",
-                    choices: employManager
-                }
-            ]).then((manager) => {
-                let newManager = manager; 
-                let employeeFacts = Object.assign(employeeNameRole, newManager)
-                console.log(employeeFacts)
-                insertEmployee(employeeFacts)
-            })
+            return inquirer
+                .prompt([
+                    {
+                        type: 'list',
+                        name: 'manager_id',
+                        message: "Who is the employee's manager?",
+                        choices: employManager
+                    }
+                ]).then((manager) => {
+                    let newManager = manager;
+                    let employeeFacts = Object.assign(employeeNameRole, newManager)
+                    console.log(employeeFacts)
+                    insertEmployee(employeeFacts)
+                })
         }
     }
 
     function insertEmployee(employeeFacts) {
-        console.log(employeeFacts.first_name) 
+        console.log(employeeFacts.first_name)
         connect.query(`INSERT INTO employee(first_name, last_name, role_id, manager_id)VALUES('${employeeFacts.first_name}','${employeeFacts.last_name}','${employeeFacts.role_id}','${employeeFacts.manager_id}')`, (err, result) => {
-            if(err) throw err
+            if (err) throw err
 
             console.log(`${employeeFacts.first_name} ${employeeFacts.last_name} added to database.`)
         })
@@ -184,24 +186,24 @@ function addEmployee() {
 
 function addRole() {
 
-        return inquirer
-            .prompt([
-                {
-                    type: 'text',
-                    name: 'title',
-                    message: 'What is the title of the role?',
-                },
-                {
-                    type: 'text',
-                    name: 'salary',
-                    message: 'What is the salary of the role?'
-                }
-            ]).then((nameSalary) => {
-                addRoleDepartment(nameSalary)
-            })
+    return inquirer
+        .prompt([
+            {
+                type: 'text',
+                name: 'title',
+                message: 'What is the title of the role?',
+            },
+            {
+                type: 'text',
+                name: 'salary',
+                message: 'What is the salary of the role?'
+            }
+        ]).then((nameSalary) => {
+            addRoleDepartment(nameSalary)
+        })
 
     function addRoleDepartment(nameSalary) {
-        let roleNameSalary = nameSalary; 
+        let roleNameSalary = nameSalary;
         connect.query(`SELECT * FROM department`, (err, results) => {
             if (err) {
                 console.log(err)
@@ -211,32 +213,32 @@ function addRole() {
                     name: department.names,
                     value: department.id
                 }
-    
+
             })
             chooseDepartment(departmentInfo);
         })
 
         function chooseDepartment(departmentInfo) {
-        return inquirer
-            .prompt([
-                {
-                    type: 'list',
-                    name: 'department_id',
-                    message: 'Which department does the role belong to?',
-                    choices: departmentInfo
-                }
-            ]).then((department) => {
-                let newDepartment = department; 
-                let newRoleInfo = Object.assign(roleNameSalary, newDepartment)
-                console.log(newRoleInfo)
-                insertRole(newRoleInfo) 
-            })
+            return inquirer
+                .prompt([
+                    {
+                        type: 'list',
+                        name: 'department_id',
+                        message: 'Which department does the role belong to?',
+                        choices: departmentInfo
+                    }
+                ]).then((department) => {
+                    let newDepartment = department;
+                    let newRoleInfo = Object.assign(roleNameSalary, newDepartment)
+                    console.log(newRoleInfo)
+                    insertRole(newRoleInfo)
+                })
         }
 
         function insertRole(newRoleInfo) {
-            connect.query(`INSERT INTO roles(title, salary, department_id) VALUES('${newRoleInfo.title}', '${newRoleInfo.salary}', '${newRoleInfo.department_id}')`, (err,result) => {
-                if(err) throw err
-                console.log(`${newRoleInfo.title} added to database.`) 
+            connect.query(`INSERT INTO roles(title, salary, department_id) VALUES('${newRoleInfo.title}', '${newRoleInfo.salary}', '${newRoleInfo.department_id}')`, (err, result) => {
+                if (err) throw err
+                console.log(`${newRoleInfo.title} added to database.`)
             })
         }
     }
@@ -282,33 +284,34 @@ function removeEmployee() {
 
 //update functions 
 function updateEmployeeRole() {
-    
-        connect.query(`SELECT * FROM employee`, (err, results) => {
-            if (err) throw err;
-            let employeeList = results.map((employees) => {
-                return {
-                    name: `${employees.first_name} ${employees.last_name}`,
-                    value: employees.id
-                }
-            })
-            roleEmployeeList(employeeList);
-        })
 
-        function roleEmployeeList(employeeList) {
-            return inquirer
-                .prompt([
-                    {
-                        type: 'list',
-                        name: 'id',
-                        message: "Which employee's role do you want to update?",
-                        choices: employeeList
-                    }
-                ]).then((chosenEmployee) => { 
-                    chooseNewRole(chosenEmployee)})
-        }
-    
+    connect.query(`SELECT * FROM employee`, (err, results) => {
+        if (err) throw err;
+        let employeeList = results.map((employees) => {
+            return {
+                name: `${employees.first_name} ${employees.last_name}`,
+                value: employees.id
+            }
+        })
+        roleEmployeeList(employeeList);
+    })
+
+    function roleEmployeeList(employeeList) {
+        return inquirer
+            .prompt([
+                {
+                    type: 'list',
+                    name: 'id',
+                    message: "Which employee's role do you want to update?",
+                    choices: employeeList
+                }
+            ]).then((chosenEmployee) => {
+                chooseNewRole(chosenEmployee)
+            })
+    }
+
     function chooseNewRole(chosenEmployee) {
-        let newRoleEmployee = chosenEmployee; 
+        let newRoleEmployee = chosenEmployee;
         connect.query(`SELECT * FROM roles`, (err, results) => {
             if (err) {
                 console.log(err)
@@ -335,18 +338,18 @@ function updateEmployeeRole() {
                 ]).then((updatedRole) => {
                     let newRole = Object.assign(newRoleEmployee, updatedRole)
                     console.log(newRole)
-                    connect.query(`INSERT INTO employee WHERE id = ${newRole.id};`, (err, result) => {
+                    connect.query(`UPDATE employee SET role_id = '${newRole.role_id}' WHERE id = '${newRole.id}';`, (err, result) => {
                         if (err) throw err
                         console.log(`Employee role has been updated`)
                     })
                 })
         }
-    
-}
+
+    }
 }
 
 function updateEmployeeManager() {
-    
+
     connect.query(`SELECT * FROM employee`, (err, results) => {
         if (err) throw err;
         let employeeList = results.map((employees) => {
@@ -367,48 +370,48 @@ function updateEmployeeManager() {
                     message: "Which employee's role do you want to update?",
                     choices: employeeList
                 }
-            ]).then((employee) => {chooseNewManager(employee)})
+            ]).then((employee) => { chooseNewManager(employee) })
     }
 
-function chooseNewManager(employee) {
-    let chosenEmployee = employee; 
-    connect.query(`SELECT * FROM manager`, (err, results) => {
-        if (err) {
-            console.log(err)
+    function chooseNewManager(employee) {
+        let chosenEmployee = employee;
+        connect.query(`SELECT * FROM manager`, (err, results) => {
+            if (err) {
+                console.log(err)
+            }
+
+            let managerInfo = results.map((manager) => {
+                return {
+                    name: `${manager.first_name} ${manager.last_name}`,
+                    value: manager.id
+                }
+            })
+            updateManagerEmployeeManager(managerInfo);
+        })
+
+        function updateManagerEmployeeManager(managerInfo) {
+            console.log(managerInfo)
+            return inquirer
+                .prompt([
+                    {
+                        type: 'list',
+                        name: 'newRole',
+                        message: "What is the employee's new manager?",
+                        choices: managerInfo
+                    }
+                ]).then((updatedManager) => {
+                    console.log(updatedManager)
+                    let roleID = updatedRole.newRole
+                    console.log(roleID)
+                    // somehow need to indicate the eployee id as well? a join? 
+                    connect.query(`INSERT INTO employee WHERE id = ${roleID};`, (err, result) => {
+                        if (err) throw err
+                        console.log(`Employee role has been updated`)
+                    })
+                })
         }
 
-        let managerInfo = results.map((manager) => {
-            return {
-                name: `${manager.first_name} ${manager.last_name}`,
-                value: manager.id
-            }
-        })
-        updateManagerEmployeeManager(managerInfo);
-    })
-
-    function updateManagerEmployeeManager(managerInfo) {
-        console.log(managerInfo)
-        return inquirer
-            .prompt([
-                {
-                    type: 'list',
-                    name: 'newRole',
-                    message: "What is the employee's new manager?",
-                    choices: managerInfo
-                }
-            ]).then((updatedManager) => {
-                console.log(updatedManager)
-                let roleID = updatedRole.newRole
-                console.log(roleID)
-                // somehow need to indicate the eployee id as well? a join? 
-                connect.query(`INSERT INTO employee WHERE id = ${roleID};`, (err, result) => {
-                    if (err) throw err
-                    console.log(`Employee role has been updated`)
-                })
-            })
     }
-
-}
 }
 
 
