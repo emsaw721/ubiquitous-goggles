@@ -29,6 +29,9 @@ const promptQuestions = employeeData => {
                 case 'Update Employee Role':
                     updateEmployeeRole();
                     break;
+                case 'Update Employee Manager':
+                    upateEmployeeManager();
+                    break; 
                 case 'View All Roles':
                     viewRoles();
                     break;
@@ -233,7 +236,6 @@ function addRole() {
         function insertRole(newRoleInfo) {
             connect.query(`INSERT INTO roles(title, salary, department_id) VALUES('${newRoleInfo.title}', '${newRoleInfo.salary}', '${newRoleInfo.department_id}')`, (err,result) => {
                 if(err) throw err
-                
                 console.log(`${newRoleInfo.title} added to database.`) 
             })
         }
@@ -297,14 +299,16 @@ function updateEmployeeRole() {
                 .prompt([
                     {
                         type: 'list',
-                        name: 'employee-list',
+                        name: 'id',
                         message: "Which employee's role do you want to update?",
                         choices: employeeList
                     }
-                ]).then(() => { chooseNewRole()})
+                ]).then((chosenEmployee) => { 
+                    chooseNewRole(chosenEmployee)})
         }
     
-    function chooseNewRole() {
+    function chooseNewRole(chosenEmployee) {
+        let newRoleEmployee = chosenEmployee; 
         connect.query(`SELECT * FROM roles`, (err, results) => {
             if (err) {
                 console.log(err)
@@ -320,21 +324,18 @@ function updateEmployeeRole() {
         })
 
         function updateRoleEmployeeRole(roleInfo) {
-            console.log(roleInfo)
             return inquirer
                 .prompt([
                     {
                         type: 'list',
-                        name: 'newRole',
+                        name: 'role_id',
                         message: "What is the employee's new role?",
                         choices: roleInfo
                     }
                 ]).then((updatedRole) => {
-                    console.log(updatedRole)
-                    let roleID = updatedRole.newRole
-                    console.log(roleID)
-                    // somehow need to indicate the eployee id as well? a join? 
-                    connect.query(`INSERT INTO employee WHERE id = ${roleID};`, (err, result) => {
+                    let newRole = Object.assign(newRoleEmployee, updatedRole)
+                    console.log(newRole)
+                    connect.query(`INSERT INTO employee WHERE id = ${newRole.id};`, (err, result) => {
                         if (err) throw err
                         console.log(`Employee role has been updated`)
                     })
@@ -343,6 +344,74 @@ function updateEmployeeRole() {
     
 }
 }
+
+function updateEmployeeManager() {
+    
+    connect.query(`SELECT * FROM employee`, (err, results) => {
+        if (err) throw err;
+        let employeeList = results.map((employees) => {
+            return {
+                name: `${employees.first_name} ${employees.last_name}`,
+                value: employees.id
+            }
+        })
+        managerEmployeeList(employeeList);
+    })
+
+    function managerEmployeeList(employeeList) {
+        return inquirer
+            .prompt([
+                {
+                    type: 'list',
+                    name: 'employee-list',
+                    message: "Which employee's role do you want to update?",
+                    choices: employeeList
+                }
+            ]).then((employee) => {chooseNewManager(employee)})
+    }
+
+function chooseNewManager(employee) {
+    let chosenEmployee = employee; 
+    connect.query(`SELECT * FROM manager`, (err, results) => {
+        if (err) {
+            console.log(err)
+        }
+
+        let managerInfo = results.map((manager) => {
+            return {
+                name: `${manager.first_name} ${manager.last_name}`,
+                value: manager.id
+            }
+        })
+        updateManagerEmployeeManager(managerInfo);
+    })
+
+    function updateManagerEmployeeManager(managerInfo) {
+        console.log(managerInfo)
+        return inquirer
+            .prompt([
+                {
+                    type: 'list',
+                    name: 'newRole',
+                    message: "What is the employee's new manager?",
+                    choices: managerInfo
+                }
+            ]).then((updatedManager) => {
+                console.log(updatedManager)
+                let roleID = updatedRole.newRole
+                console.log(roleID)
+                // somehow need to indicate the eployee id as well? a join? 
+                connect.query(`INSERT INTO employee WHERE id = ${roleID};`, (err, result) => {
+                    if (err) throw err
+                    console.log(`Employee role has been updated`)
+                })
+            })
+    }
+
+}
+}
+
+
 
 function endEdit() {
     process.exit();
