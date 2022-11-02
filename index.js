@@ -12,7 +12,7 @@ const promptQuestions = employeeData => {
                 type: 'list',
                 name: 'action',
                 message: 'What would you like to do?',
-                choices: ['View All Employees', 'View Employees By Manager', 'View Employees By Department', 'Add Employee', 'Remove Employee', 'Update Employee Role', 'Update Employee Manager', 'View All Roles', 'Add Role', 'Remove Role', 'View All Departments', 'Add Department', 'Remove Department', 'View Department Budget', 'Quit']
+                choices: ['View All Employees', 'View Employees By Manager', 'Add Employee', 'Remove Employee', 'Update Employee Role', 'Update Employee Manager', 'View All Roles', 'Add Role', 'Remove Role', 'View All Departments', 'Add Department', 'Remove Department', 'Quit']
             }
         ])
         .then(function (userInput) {
@@ -113,38 +113,38 @@ function viewEmployeesByManager() {
     }
 }
 
-function viewEmployeesByDepartment() {
-    connect.query(`SELECT * FROM department`, (err, results) => {
-        if (err) throw err
-        let departmentList = results.map((departments) => {
-            return {
-                name: departments.names,
-                value: departments.id
-            }
-        })
-        selectDepartment(departmentList);
-    })
-    function selectDepartment(departmentList) {
-        return inquirer
-            .prompt([
-                {
-                    type: 'list',
-                    name: 'department_id',
-                    message: 'Choose a manager to see the employee list.',
-                    choices: departmentList
-                }
-            ]).then((departmentChoice) => {
-                let departmentId = departmentChoice.department_id
-                connect.query(`SELECT employee.first_name, employee.last_name, employee.id FROM employee INNER JOIN role ON employee.id=role.id `, (err, results) => {
-                    if (err) throw err
-                    console.table(results)
-                    promptQuestions();
+// function viewEmployeesByDepartment() {
+//     connect.query(`SELECT * FROM department`, (err, results) => {
+//         if (err) throw err
+//         let departmentList = results.map((departments) => {
+//             return {
+//                 name: departments.names,
+//                 value: departments.id
+//             }
+//         })
+//         selectDepartment(departmentList);
+//     })
+//     function selectDepartment(departmentList) {
+//         return inquirer
+//             .prompt([
+//                 {
+//                     type: 'list',
+//                     name: 'department_id',
+//                     message: 'Choose a manager to see the employee list.',
+//                     choices: departmentList
+//                 }
+//             ]).then((departmentChoice) => {
+//                 let departmentId = departmentChoice.department_id
+//                 connect.query(`SELECT employee.first_name, employee.last_name, employee.id FROM employee INNER JOIN role ON employee.id=role.id `, (err, results) => {
+//                     if (err) throw err
+//                     console.table(results)
+//                     promptQuestions();
 
-                })
-            }
-            )
-    }
-}
+//                 })
+//             }
+//             )
+//     }
+// }
 
 
 
@@ -414,6 +414,7 @@ function removeDepartment() {
                     if (err) throw err
                     console.log(`Department has been removed from database.`)
                 })
+                promptQuestions(); 
             })
     }
 }
@@ -447,9 +448,9 @@ function removeRole() {
                     if (err) throw err
                     console.log(`Role has been removed from database.`)
                 })
+                promptQuestions(); 
             })
     }
-
 }
 
 //update functions 
@@ -587,13 +588,13 @@ function updateEmployeeManager() {
 }
 
 // get salary from roles but cross reference it with employees 
-function viewTotalDepartmentBudget() {
-    //supposed to create a table that merges with existing department table --> department table + number of employees in it 
-    connect.query(`SELECT * FROM department JOIN (SELECT department_id, COUNT(*) AS number_of_employees FROM roles GROUP BY department_id) department_info USING (department.id)`, (err, results) => {
-        if (err) throw err
-        console.table(results)
-    })
-}
+// function viewTotalDepartmentBudget() {
+//     //supposed to create a table that merges with existing department table --> department table + number of employees in it 
+//     connect.query(`SELECT * FROM department JOIN (SELECT department_id, COUNT(*) AS number_of_employees FROM roles GROUP BY department_id) department_info USING (department.id)`, (err, results) => {
+//         if (err) throw err
+//         console.table(results)
+//     })
+// }
 
 
 // exit node 
