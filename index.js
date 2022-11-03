@@ -190,7 +190,7 @@ function addEmployee() {
 
     function addEmployeeRole(person) {
         let employeeName = person;
-        console.log(employeeName)
+       
 
         connect.query(`SELECT * FROM roles`, (err, results) => {
             if (err) {
@@ -219,14 +219,14 @@ function addEmployee() {
                 ]).then((role) => {
                     let newRole = role;
                     let employeeNameRole = Object.assign(employeeName, newRole);
-                    console.log(employeeNameRole)
+                    
                     addEmployeeManager(employeeNameRole)
                 })
         }
     }
 
     function addEmployeeManager(employeeNameRole) {
-        console.log(employeeNameRole)
+       
         connect.query(`SELECT * FROM manager`, (err, results) => {
             if (err) {
                 console.log(err)
@@ -258,7 +258,7 @@ function addEmployee() {
     }
 
     function insertEmployee(employeeFacts) {
-        console.log(employeeFacts.first_name)
+     
         connect.query(`INSERT INTO employee(first_name, last_name, role_id, manager_id)VALUES('${employeeFacts.first_name}','${employeeFacts.last_name}','${employeeFacts.role_id}','${employeeFacts.manager_id}')`, (err, result) => {
             if (err) throw err
 
@@ -338,7 +338,7 @@ function addDepartment() {
                 message: 'What is the department called?'
             }
         ]).then((department) => {
-            console.log(department)
+          
             connect.query(`INSERT INTO department(names) VALUES('${department.names}')`, (err, result) => {
                 if (err) throw err
                 console.log(`${department.names} added to departments.`)
@@ -371,9 +371,9 @@ function removeEmployee() {
                     choices: employeeList
                 }
             ]).then((removedEmployee) => {
-                console.log(removedEmployee)
+              
                 let employeeID = removedEmployee.removeEmployee
-                console.log(employeeID)
+                
 
                 connect.query(`DELETE FROM employee WHERE id = ${employeeID};`, (err, result) => {
                     if (err) throw err
@@ -406,9 +406,9 @@ function removeDepartment() {
                     choices: departmentList
                 }
             ]).then((removedDepartment) => {
-                console.log(removedDepartment)
+               
                 let departmentID = removedDepartment.removeDepartment
-                console.log(departmentID)
+              
 
                 connect.query(`DELETE FROM department WHERE id= ${departmentID}`, (err, results) => {
                     if (err) throw err
@@ -440,9 +440,9 @@ function removeRole() {
                     choices: rolesList
                 }
             ]).then((removedRole) => {
-                console.log(removedRole)
+               
                 let roleID = removedRole.removeRole
-                console.log(roleID)
+         
 
                 connect.query(`DELETE FROM roles WHERE id = ${roleID}`, (err, results) => {
                     if (err) throw err
@@ -508,7 +508,7 @@ function updateEmployeeRole() {
                     }
                 ]).then((updatedRole) => {
                     let newRole = Object.assign(newRoleEmployee, updatedRole)
-                    console.log(newRole)
+                 
                     connect.query(`UPDATE employee SET role_id = '${newRole.role_id}' WHERE id = '${newRole.id}';`, (err, result) => {
                         if (err) throw err
                         console.log(`Employee role has been updated`)
@@ -547,7 +547,7 @@ function updateEmployeeManager() {
 
     function chooseNewManager(employeeSelected) {
         let chosenEmployee = employeeSelected;
-        console.log(chosenEmployee)
+       
         connect.query(`SELECT * FROM manager`, (err, results) => {
             if (err) {
                 console.log(err)
@@ -573,9 +573,9 @@ function updateEmployeeManager() {
                         choices: managerInfo
                     }
                 ]).then((updatedManager) => {
-                    console.log(updatedManager)
+                  
                     let newManager = Object.assign(chosenEmployee, updatedManager)
-                    console.log(newManager)
+                  
                     connect.query(`UPDATE employee SET manager_id = '${newManager.manager_id}' WHERE id = '${newManager.id}';`, (err, result) => {
                         if (err) throw err
 
